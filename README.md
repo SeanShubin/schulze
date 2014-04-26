@@ -61,4 +61,4 @@ Once the schulze application is launched, try it out by navigating to
 
 Familiarize yourself with the API
 =
-To understand the API, start with com.seanshubin.schulze.server.SchulzeHandler
+To understand the API, start with [SchulzeHandler](http://github.com/SeanShubin/schulze/blob/master/server/src/main/scala/com/seanshubin/schulze/server/SchulzeHandler.scala)
