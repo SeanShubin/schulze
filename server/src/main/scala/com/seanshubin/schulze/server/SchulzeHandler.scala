@@ -24,7 +24,7 @@ class SchulzeHandler(jsonSerialization: JsonSerialization,
     import Verb._
 
     val maybeResponse = lock.synchronized {
-      //should really let datomic handle synchronization, for now, serialize it at the http level
+      //should really let datomic handle synchronization, for now, synchronize it at the http level
       request match {
         case Post("elections") => createElection(request)
         case Post("elections", electionName, "candidates") => createCandidate(request, electionName)
