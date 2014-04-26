@@ -1,0 +1,36 @@
+<div class="election-exists">
+    <h2>Election '<span class="election-name"></span>'
+        <button class="delete-election">Delete</button>
+    </h2>
+    <div>
+        <p>If you want to be able to vote against candidates<br>
+            simply add an option that represents no candidate<br>
+            that way, you can still prioritize candidates you don't want with respect to each-other
+        </p>
+        <label>
+            New Candidate
+            <input class="candidate-name" placeholder="Enter name here" autofocus>
+            <button class="add-candidate">Add Candidate</button>
+        </label>
+    </div>
+    <div>
+        <a class="tally"><h2>Tally</h2></a>
+    </div>
+</div>
+<h2 class="election-scheduled-for-deletion">Election '<span class="election-name"></span>' scheduled for deletion</h2>
+
+<h2 class="election-does-not-exist">Election '<span class="election-name"></span>' does not exist</h2>
+<fieldset class='candidates-section'>
+    <legend>Candidates</legend>
+    <ul class="candidates">
+    </ul>
+</fieldset>
+<fieldset class='voters-section'>
+    <legend>Voters (Choose a voter to cast vote for '<span class="election-name"></span>')</legend>
+    <ul class="voters">
+    </ul>
+</fieldset>
+<ul>
+    <li><a href="../elections/elections.html">Elections</a></li>
+    <li><a href="../voters/voters.html">Voters</a></li>
+</ul>

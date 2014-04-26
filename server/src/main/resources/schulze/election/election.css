@@ -1,0 +1,17 @@
+fieldset {
+    margin-top: 20px;
+    border: 1px black solid
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+p.warning {
+    color: #7d0000;
+}
+
+input {
+    width: 40em;
+}

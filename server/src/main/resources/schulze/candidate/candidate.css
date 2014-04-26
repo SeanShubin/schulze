@@ -1,0 +1,15 @@
+fieldset {
+    margin-top: 20px;
+    border: 1px black solid
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+textarea {
+    display:block;
+    width:40em;
+    height:7em;
+}

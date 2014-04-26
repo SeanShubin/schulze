@@ -1,0 +1,6 @@
+persistence rest
+persistence rest test
+schulze logic
+schulze logic test
+schulze rest/gui/gui test
+schulze rest test

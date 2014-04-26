@@ -1,0 +1,20 @@
+sample data
+    elections
+        Favorite Programming Language
+            Scala
+            Clojure
+            Haskell
+        Least Evil Political Party
+            Nefarious
+            Debauched
+            Long Shot
+        Ice Cream
+            Chocolate
+            Vanilla
+            Strawberry
+    voters
+        Alice
+        Bob
+        Carol
+
+/elections

@@ -1,0 +1,10 @@
+given subject
+    string grid align cells
+when input is
+    aaa bbbb ccccccc
+    dddddddd e fffff
+    gggggg hhhhhhhhh ii
+then expect output to be
+    aaa      bbbb      ccccccc
+    dddddddd e         fffff
+    gggggg   hhhhhhhhh ii

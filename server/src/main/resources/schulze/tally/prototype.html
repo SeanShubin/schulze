@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="description" content="tally"/>
+    <meta charset=utf-8/>
+    <title>Schulze - Tally</title>
+    <style type="text/css">
+        fieldset {
+            margin-top: 20px;
+            border: 1px black solid;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        td, th {
+            border: 1px solid black;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="election-exists-section">
+    <h2>Results for election '<span class="election-name"></span>'</h2>
+    <fieldset>
+        <legend>Places</legend>
+        <table class="places">
+        </table>
+    </fieldset>
+    <button class="show-details">Show Details</button>
+    <div class="details-section">
+        <fieldset>
+            <legend>Votes</legend>
+            <p>Participating voters and their effective rankings</p>
+            <table>
+                <thead>
+                <tr class="candidate-names"></tr>
+                </thead>
+                <tbody class="votes">
+                </tbody>
+            </table>
+        </fieldset>
+        <fieldset>
+            <legend>Preferences</legend>
+            <p>Read each row of this table as<br>
+                {voters} voters prefer {winner} over {loser}</p>
+            <table>
+                <thead>
+                <tr>
+                    <th>voters</th>
+                    <th>winner</th>
+                    <th>loser</th>
+                </tr>
+                </thead>
+                <tbody class="preferences">
+                </tbody>
+            </table>
+        </fieldset>
+        <fieldset>
+            <legend>Preference Matrix</legend>
+            <p>Same data as 'Preferences' section, in tabular form.<br>
+                Header at the left are the winners.
+                Header at the top are the losers</p>
+            <table>
+                <thead class="preference-matrix-header">
+                </thead>
+                <tbody class="preference-matrix-body">
+                </tbody>
+            </table>
+        </fieldset>
+        <fieldset>
+            <legend>Floyd-Warshall algorithm</legend>
+            <div class="floyd-warshall"></div>
+        </fieldset>
+        <fieldset>
+            <legend>Strongest Paths</legend>
+            <table>
+                <thead>
+                <tr>
+                    <th>strength</th>
+                    <th>winner</th>
+                    <th>loser</th>
+                </tr>
+                </thead>
+                <tbody class="strongest-paths"></tbody>
+            </table>
+        </fieldset>
+        <fieldset>
+            <legend>Strongest Path Matrix</legend>
+            <table>
+                <thead class="strongest-paths-header">
+                </thead>
+                <tbody class="strongest-paths-body">
+                </tbody>
+            </table>
+        </fieldset>
+    </div>
+</div>
+<div class="election-does-not-exist-section">
+    <h2>Election '<span class="election-name"></span>' does not exist</h2>
+</div>
+<div class="problem-with-server-section">
+    <h2>Problem with server</h2>
+</div>
+<ul>
+    <li><a class='election-page-link'>Back to Election '<span class="election-name"></span>'</a></li>
+    <li><a href="../elections/elections.html">Elections</a></li>
+    <li><a href="../voters/voters.html">Voters</a></li>
+</ul>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.1/underscore-min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
+<script type="text/javascript">
+define('tallyPage', [], function module() {
+            return function (options) {
+                var view = options.view,
+                        sendRequest = options.sendRequest,
+                        electionName = options.electionName,
+                        tallyDetailsButton = view.find('.tally-details'),
+                        candidateNamesElement = view.find('.candidate-names'),
+                        placesElement = view.find('.places'),
+                        votesElement = view.find('.votes'),
+                        preferencesElement = view.find('.preferences'),
+                        floydWarshallElement = view.find('.floyd-warshall'),
+                        preferenceMatrixHeaderElement = view.find('.preference-matrix-header'),
+                        preferenceMatrixBodyElement = view.find('.preference-matrix-body'),
+                        strongestPathsElement = view.find('.strongest-paths'),
+                        strongestPathsHeaderElement = view.find('.strongest-paths-header'),
+                        strongestPathsBodyElement = view.find('.strongest-paths-body');
+
+                function indexToPlaceText(index) {
+                    if (index === 0) return '1st';
+                    else if (index === 1) return '2nd';
+                    else if (index === 2) return '3rd';
+                    else return '' + (index + 1) + 'th';
+                }
+
+                function isSuccess(status) {
+                    return status >= 200 && status < 400;
+                }
+
+                function showPlaces(places) {
+                    view.find('.places-section').show();
+                    function composePlaceRow(tiedCandidates, index) {
+                        function composePlaceCell(candidate) {
+                            return '<td>' + _.escape(candidate) + '</td>';
+                        }
+
+                        return '<tr class="place"><td>' + indexToPlaceText(index) + '</td>' + _.map(tiedCandidates, composePlaceCell).join('') + '</tr>';
+                    }
+
+                    placesElement.html(_.map(places, composePlaceRow).join(''))
+                }
+
+                function getPlaces() {
+                    sendRequest({
+                        method: 'GET',
+                        uri: '/places/' + encodeURIComponent(electionName),
+                        onResponse: function (response) {
+                            if (isSuccess(response.status)) {
+                                showPlaces(response.body)
+                            }
+                        }
+                    });
+                }
+
+                function populateCandidateNames(candidateNames) {
+                    function composeCandidateNames(candidateNames) {
+                        function composeCandidateName(candidateName) {
+                            return '<th>' + _.escape(candidateName) + '</th>';
+                        }
+
+                        return '<th></th>' + _.map(candidateNames, composeCandidateName);
+                    }
+
+                    candidateNamesElement.html(composeCandidateNames(candidateNames));
+                }
+
+                function populateVotes(tally) {
+                    function composeVoteRow(voterName) {
+                        function composeVoteCell(candidateName) {
+                            return '<td>' + tally.votes[voterName][candidateName] + '</td>'
+                        }
+
+                        return '<tr><td>' + _.escape(voterName) + '</td>' + _.map(tally.candidateNames, composeVoteCell).join('') + '</tr>'
+                    }
+
+                    votesElement.html(_.map(tally.voterNames, composeVoteRow).join(''));
+                }
+
+                function populatePreferences(tally) {
+                    function composeWinnerRows(winner) {
+                        function composeLoserRow(loser) {
+                            if (winner === loser) {
+                                return '';
+                            } else {
+                                var result;
+                                result = '<tr><td>' + tally.preferences[winner][loser] + '</td>' +
+                                        '<td>' + _.escape(winner) + '</td>' +
+                                        '<td>' + _.escape(loser) + '</td></tr>';
+                                return result;
+                            }
+                        }
+
+                        return _.map(tally.candidateNames, composeLoserRow).join('');
+                    }
+
+                    preferencesElement.html(_.map(tally.candidateNames, composeWinnerRows).join(''));
+                }
+
+                function populatePreferenceMatrix(tally) {
+                    function composeHeaderCell(candidateName) {
+                        return '<th>' + _.escape(candidateName) + '</th>';
+                    }
+
+                    function composeRow(winner) {
+                        function composeCell(loser) {
+                            if (winner === loser) return '<td></td>';
+                            else return '<td>' + tally.preferences[winner][loser] + '</td>';
+                        }
+
+                        return '<tr><th>' + _.escape(winner) + '</th>' + _.map(tally.candidateNames, composeCell).join('') + '</tr>';
+                    }
+
+                    preferenceMatrixHeaderElement.html('<th></th>' + _.map(tally.candidateNames, composeHeaderCell).join(''));
+                    preferenceMatrixBodyElement.html(_.map(tally.candidateNames, composeRow).join(''))
+                }
+
+                function hideAll() {
+                    view.find('.election-exists-section').hide();
+                    view.find('.election-does-not-exist-section').hide();
+                    view.find('.problem-with-server-section').hide();
+                    view.find('.details-section').hide();
+                }
+
+                function initialize() {
+                    view.find('.election-name').text(electionName);
+                    view.find('.election-page-link').attr('href', '../election/election.html?electionName=' + encodeURIComponent(electionName));
+                    view.find('.show-details').click(getTally);
+                    hideAll();
+                    getElectionExists();
+                }
+
+                function getTally() {
+                    sendRequest({
+                        method: 'GET',
+                        uri: '/tally/' + encodeURIComponent(electionName),
+                        onResponse: function (response) {
+                            if (isSuccess(response.status)) {
+                                showDetails(response.body)
+                            }
+                        }
+                    });
+                }
+
+                function getElectionExists() {
+                    sendRequest({
+                        method: 'GET',
+                        uri: '/elections/' + encodeURIComponent(electionName),
+                        onResponse: function (response) {
+                            if (isSuccess(response.status)) {
+                                view.find('.election-exists-section').show();
+                                getPlaces();
+                            } else if (response.status == 404) {
+                                view.find('.election-does-not-exist-section').show();
+                            } else {
+                                view.find('.problem-with-server-section').show();
+                            }
+                        }
+                    });
+                }
+
+                function populateFloydWarshall(tally) {
+                    function composeInitialPaths() {
+                        function composeInitialPathsWinner(winner) {
+                            function composeInitialPathLoser(loser) {
+                                if (winner === loser) return '';
+                                else return '<tr><td>' + _.escape(winner) + '</td><td>' + tally.preferences[winner][loser] + '</td><td>' + _.escape(loser) + '</td></tr>'
+                            }
+
+                            return _.map(tally.candidateNames, composeInitialPathLoser).join('');
+                        }
+
+                        var initialPathsHeader = '<p>Initial paths</p>';
+                        return initialPathsHeader + '<table>' + _.map(tally.candidateNames, composeInitialPathsWinner).join('') + '</table>';
+                    }
+
+                    function composeFloydWarshall(candidateName) {
+                        function renderTafter(function () {
+    // When the test either fails or passes, restore the original
+    // jQuery ajax function (Sinon.JS also provides tools to help
+    // test frameworks automate clean-up like this)
+    jQuery.ajax.restore();
+});able(rows) {
+                            function renderRow(row) {
+                                function renderCell(cell) {
+                                    return '<td>' + _.escape(cell) + '</td>'
+                                }
+
+                                return '<tr>' + _.map(row, renderCell).join('') + '</tr>'
+                            }
+
+                            return '<table>' + _.map(rows, renderRow).join('') + '</table>'
+                        }
+
+                        var alternativesHeader = '<p>Alternatives using candidate ' + _.escape(candidateName) + '</p>',
+                                strongestPathsHeader = '<p>Strongest paths after resolving alternatives using ' + _.escape(candidateName) + '</p>';
+                        return alternativesHeader + renderTable(tally.warshall[candidateName].alternatives) + strongestPathsHeader + renderTable(tally.warshall[candidateName].paths);
+                    }
+
+                    floydWarshallElement.html(
+                            composeInitialPaths() +
+                                    _.map(tally.candidateNames, composeFloydWarshall).join(''));
+                }
+
+                function populateStrongestPaths(tally) {
+                    function composeStrongestPaths() {
+                        function composeRows(winner) {
+                            function composeRow(loser) {
+                                if (winner === loser) return '';
+                                else return '<tr>' + '<td>' + tally.strongestPaths[winner][loser] + '</td>' +
+                                        '<td>' + _.escape(winner) + '</td>' +
+                                        '<td>' + _.escape(loser) + '</td>' + '</tr>';
+                            }
+
+                            return _.map(tally.candidateNames, composeRow).join('');
+                        }
+
+                        return _.map(tally.candidateNames, composeRows).join('');
+                    }
+
+                    strongestPathsElement.html(composeStrongestPaths());
+                }
+
+                function populateStrongestPathsMatrix(tally) {
+                    function composeHeader() {
+                        function composeCell(candidateName) {
+                            return '<th>' + _.escape(candidateName) + '</th>'
+                        }
+
+                        return '<th></th>' + _.map(tally.candidateNames, composeCell).join('');
+                    }
+
+                    function composeRows() {
+                        function composeRow(winner) {
+                            function composeCell(loser) {
+                                if (winner === loser) return '<td></td>';
+                                else return '<td>' + tally.strongestPaths[winner][loser] + '</td>';
+                            }
+
+                            return '<tr><th>' + _.escape(winner) + '</th>' + _.map(tally.candidateNames, composeCell).join('') + '</tr>';
+                        }
+
+                        return _.map(tally.candidateNames, composeRow).join('');
+                    }
+
+                    strongestPathsHeaderElement.html(composeHeader());
+                    strongestPathsBodyElement.html(composeRows());
+                }
+
+                function showDetails(tally) {
+                    showPlaces(tally.places);
+                    view.find('.details-section').show();
+                    populateCandidateNames(tally.candidateNames);
+                    populateVotes(tally);
+                    populatePreferences(tally);
+                    populatePreferenceMatrix(tally);
+                    populateFloydWarshall(tally);
+                    populateStrongestPaths(tally);
+                    populateStrongestPathsMatrix(tally);
+                }
+
+                tallyDetailsButton.click(function () {
+                    console.log('tallyDetailsButton');
+                    sendRequest({
+                        method: 'GET',
+                        uri: '/tally/' + encodeURIComponent(electionName),
+                        onResponse: function (response) {
+                            if (isSuccess(response.status)) {
+                                showDetails(response.body)
+                            }
+                        }
+                    })
+                });
+                initialize();
+            };
+        }
+);
+function fakeSendRequest(request) {
+    if (request.uri === '/elections/Ice%20Cream') {
+        request.onResponse({
+            status: 200,
+            body: {name: 'Ice Cream'}
+        });
+    } else if (request.uri === '/places/Ice%20Cream') {
+        request.onResponse({
+            status: 200,
+            body: [
+                ['<vanilla>'],
+                ['Chocolate', 'Mint', 'Oreo'],
+                ['Strawberry', 'Cherry']
+            ]
+        });
+    } else if (request.uri === '/tally/Ice%20Cream') {
+        request.onResponse({
+            status: 200,
+            body: {
+                places: [
+                    ['<vanilla>'],
+                    ['Chocolate', 'Mint', 'Oreo'],
+                    ['Strawberry', 'Cherry']
+                ],
+                candidateNames: ['<vanilla>', 'Chocolate', 'Strawberry'],
+                voterNames: ['<alice>', 'Bob', 'Carol'],
+                votes: {
+                    '<alice>': {
+                        '<vanilla>': 1,
+                        'Chocolate': 2,
+                        'Strawberry': 3
+                    },
+                    'Bob': {
+                        '<vanilla>': 3,
+                        'Chocolate': 1,
+                        'Strawberry': 2
+                    },
+                    'Carol': {
+                        '<vanilla>': 1,
+                        'Chocolate': 3,
+                        'Strawberry': 2
+                    }
+                },
+                preferences: {
+                    '<vanilla>': {
+                        'Chocolate': 3,
+                        'Strawberry': 7
+                    },
+                    'Chocolate': {
+                        '<vanilla>': 2,
+                        'Strawberry': 5
+                    },
+                    'Strawberry': {
+                        '<vanilla>': 9,
+                        'Chocolate': 4
+                    }
+                },
+                warshall: {
+                    '<vanilla>': {
+                        alternatives: [
+                            ['Chocolate', 3, '<vanilla>', 2, 'Strawberry'],
+                            ['Strawberry', 7, '<vanilla>', 1, 'Chocolate']
+                        ],
+                        paths: [
+                            ['Chocolate', 3, '<vanilla>', 2, 'Strawberry'],
+                            ['Strawberry', 7, '<vanilla>', 1, 'Chocolate'],
+                            ['<vanilla>', 3, 'Chocolate', 2, 'Strawberry'],
+                            ['Strawberry', 7, 'Chocolate', 1, '<vanilla>'],
+                            ['<vanilla>', 3, 'Strawberry', 2, 'Chocolate'],
+                            ['Chocolate', 7, 'Strawberry', 1, '<vanilla>']
+                        ]
+                    },
+                    'Chocolate': {
+                        alternatives: [
+                            ['<vanilla>', 3, 'Chocolate', 2, 'Strawberry'],
+                            ['Strawberry', 7, 'Chocolate', 1, '<vanilla>']
+                        ],
+                        paths: [
+                            ['Chocolate', 3, '<vanilla>', 2, 'Strawberry'],
+                            ['Strawberry', 7, '<vanilla>', 1, 'Chocolate'],
+                            ['<vanilla>', 3, 'Chocolate', 2, 'Strawberry'],
+                            ['Strawberry', 7, 'Chocolate', 1, '<vanilla>'],
+                            ['<vanilla>', 3, 'Strawberry', 2, 'Chocolate'],
+                            ['Chocolate', 7, 'Strawberry', 1, '<vanilla>']
+                        ]
+                    },
+                    'Strawberry': {
+                        alternatives: [
+                            ['<vanilla>', 3, 'Strawberry', 2, 'Chocolate'],
+                            ['Chocolate', 7, 'Strawberry', 1, '<vanilla>']
+                        ],
+                        paths: [
+                            ['Chocolate', 3, '<vanilla>', 2, 'Strawberry'],
+                            ['Strawberry', 7, '<vanilla>', 1, 'Chocolate'],
+                            ['<vanilla>', 3, 'Chocolate', 2, 'Strawberry', 4, 'Mint'],
+                            ['Strawberry', 7, 'Chocolate', 1, '<vanilla>'],
+                            ['<vanilla>', 3, 'Strawberry', 2, 'Chocolate'],
+                            ['Chocolate', 7, 'Strawberry', 1, '<vanilla>']
+                        ]
+                    }
+                },
+                strongestPaths: {
+                    '<vanilla>': {
+                        'Chocolate': 3,
+                        'Strawberry': 7
+                    },
+                    'Chocolate': {
+                        '<vanilla>': 2,
+                        'Strawberry': 5
+                    },
+                    'Strawberry': {
+                        '<vanilla>': 9,
+                        'Chocolate': 4
+                    }
+                }
+            }
+        });
+    } else {
+        console.log('unknown parameter to fakeSendRequest');
+        console.log(request);
+    }
+}
+
+require(['tallyPage'], function (tallyPage) {
+    tallyPage({
+        view: $('body'),
+        sendRequest: fakeSendRequest,
+        electionName: 'Ice Cream'
+    });
+});
+</script>
+</body>
+</html>

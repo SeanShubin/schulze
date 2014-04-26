@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="description" content="elections"/>
+    <meta charset=utf-8/>
+    <title>Schulze - Elections</title>
+    <style type="text/css">
+        fieldset {
+            margin-top: 20px;
+            border: 1px black solid
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<h1>Elections</h1>
+<label>
+    New Election
+    <input class="election-name" placeholder="Enter name here" autofocus>
+    <button class="add-election">Add Election</button>
+</label>
+<fieldset>
+    <legend>Existing Elections</legend>
+    <ul class="elections"></ul>
+</fieldset>
+<a href="../schulze.html">Back to Schulze</a>
+<script type="text/template" class="single-election-template">
+    <li>
+        <a class="election" href="/schulze/election/election.html?name=<%= urlEncodedName %>"><%= name %></a>
+    </li>
+</script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.1/underscore-min.js"></script>
+<script type="text/javascript">
+    var createElectionPagePrototype, fakeElections, serverApi, body, electionTemplate, component;
+
+    //implementation
+    createElectionsPagePrototype = function (options) {
+        var dom, electionTemplate, serverApi, setElectionNames, setupEventHandling, initialize, electionNameField,
+                addElectionClicked, electionNameKeypress, ENTER_KEY, contract;
+
+        ENTER_KEY = 13;
+        dom = options.dom;
+        electionTemplate = options.electionTemplate;
+        electionNameField = $(dom.find('.election-name'));
+        serverApi = options.serverApi;
+        setElectionNames = function (names) {
+            var compiled, insertElectionNamed;
+            compiled = _.template(electionTemplate);
+            insertElectionNamed = function (name) {
+                var expanded = compiled({name: name, urlEncodedName: encodeURIComponent(name)});
+                dom.find('.elections').append(expanded)
+            };
+            dom.find('.elections').empty();
+            _.each(names, insertElectionNamed)
+        };
+        addElectionClicked = function () {
+            serverApi.addElection(electionNameField.val());
+            electionNameField.val('');
+        };
+        electionNameKeypress = function (e) {
+            if (e.keyCode == ENTER_KEY) {
+                addElectionClicked();
+            }
+        };
+        setupEventHandling = function () {
+            dom.find('.add-election').on('click', addElectionClicked);
+            dom.find('.election-name').on('keypress', electionNameKeypress);
+        };
+        initialize = function () {
+            setupEventHandling();
+            serverApi.electionNames();
+        };
+        contract = {
+            dom: dom,
+            setElectionNames: setElectionNames,
+            initialize: initialize
+        };
+        return contract;
+    };
+    //fake collaborators
+    fakeElections = ['Ice Cream', 'Programming Language', 'Restaurant'];
+    serverApi = {
+        electionNames: function () {
+            component.setElectionNames(fakeElections);
+        },
+        addElection: function (electionName) {
+            fakeElections.push(electionName);
+            component.setElectionNames(fakeElections);
+        }
+    };
+    //wiring
+    body = $('body');
+    electionTemplate = body.find('.single-election-template').html();
+    component = createElectionsPagePrototype({
+        dom: body,
+        electionTemplate: electionTemplate,
+        serverApi: serverApi
+    });
+    //run it!
+    $(component.initialize)
+</script>
+</body>
+</html>

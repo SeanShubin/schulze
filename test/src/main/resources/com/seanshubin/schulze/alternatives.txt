@@ -1,0 +1,15 @@
+given subject
+    alternatives
+when input is
+    paths
+        spoiler mediocre
+        spoiler preferred
+        mediocre spoiler
+        mediocre spoiler preferred
+        preferred spoiler
+        preferred mediocre
+    pivot
+        mediocre
+then expect output to be
+    spoiler mediocre spoiler preferred
+    preferred mediocre spoiler

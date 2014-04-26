@@ -1,0 +1,31 @@
+pages
+    home page
+        link to elections page
+        link to voters page
+    elections page
+        add new election
+        link to each election page
+    election page
+        election name
+        tally
+        add new candidate
+        link to each candidate page
+        for each voter, link to each voter's vote page for that election (even if empty)
+        delete election
+    candidate page
+        candidate name
+        delete candidate
+    voters page
+        add new voter
+        link to each voter page
+    voter page
+        voter name
+        for each election, link to each election's vote page for that voter (even if empty)
+        delete voter
+    vote page
+        election name
+        voter name
+        edit rank for each candidate
+        link to voter page
+        link to election page
+        reset vote

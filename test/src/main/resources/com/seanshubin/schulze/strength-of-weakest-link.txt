@@ -1,0 +1,24 @@
+given subject
+    path strength
+when input is
+    preferences
+        spoiler   > mediocre  = 4
+        spoiler   > preferred = 4
+        mediocre  > spoiler   = 5
+        mediocre  > preferred = 3
+        preferred > spoiler   = 5
+        preferred > mediocre  = 6
+    paths
+        spoiler mediocre preferred
+        spoiler preferred mediocre
+        mediocre spoiler preferred
+        mediocre preferred spoiler
+        preferred spoiler mediocre
+        preferred mediocre spoiler
+then expect output to be
+    3 spoiler mediocre preferred
+    4 spoiler preferred mediocre
+    4 mediocre spoiler preferred
+    3 mediocre preferred spoiler
+    4 preferred spoiler mediocre
+    5 preferred mediocre spoiler

@@ -1,0 +1,27 @@
+given subject
+    resolve strongest paths
+when input is
+    preference strengths
+        spoiler   > mediocre  = 4
+        spoiler   > preferred = 4
+        mediocre  > spoiler   = 5
+        mediocre  > preferred = 3
+        preferred > spoiler   = 5
+        preferred > mediocre  = 6
+    paths
+        spoiler mediocre
+        spoiler preferred
+        mediocre spoiler
+        mediocre preferred
+        preferred spoiler
+        preferred mediocre
+    alternatives
+        mediocre spoiler preferred
+        preferred spoiler mediocre
+then expect output to be
+    spoiler mediocre
+    spoiler preferred
+    mediocre spoiler
+    mediocre spoiler preferred
+    preferred spoiler
+    preferred mediocre

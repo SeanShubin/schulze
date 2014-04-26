@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Functional Sample</title>
+    <style>
+    </style>
+</head>
+<body>
+<script type="text/javascript" src="../lib/vendor/jquery/2.0.1/jquery.js"></script>
+<script type="text/javascript" src="../lib/vendor/underscore/1.4.4/underscore.js"></script>
+<script type="text/javascript">
+    function isMatch(options) {
+        var originalPattern, text, pattern;
+        originalPattern = options.pattern;
+        text = options.text;
+        pattern = new RegExp("^" + originalPattern.source + "$");
+        return pattern.text(text);
+    }
+    function loadColorAliases(lines) {
+        var colorPattern, aliasPattern, addRemainingLines;
+        colorPattern = /(\w+)/;
+        aliasPattern = /\s+(\w+)/;
+        addRemainingLines = function(colorAliases, currentColor, remainingLines) {
+            var colorName;
+            //if we are out of remaining lines, we know that what we have built so far is complete
+            if (remainingLines.isEmpty) {
+                return colorAliases
+            } else {
+                var line;
+                line = _.first(remainingLines);
+                if(isMatch({text: line, pattern: colorPattern})) {
+                    colorName = line;
+                    return addRemainingLines(colorAliases, colorName, _.rest(remainingLines))
+                } else if(isMatch())
+                line match {
+                    //if the line is a color
+                    //leave the color aliases the same
+                    //use the new color name instead of the current color
+                    //don't send along the line we have just processed, done here with the .tail function
+                case ColorPattern(colorName) => addRemainingLines(colorAliases, colorName, remainingLines.tail)
+
+                    //if the line is an alias, update the color aliases map
+                    //send along the new color aliases
+                    //leave current color the same
+                    //don't send along the line we have just processed, done here with the .tail function
+                    //a few more lines than necessary are used here clearly demonstrate how the alias is added without mutable state
+                case AliasPattern(aliasName) =>
+                    val currentAliases = colorAliases(currentColor)
+                    val newAliases = currentAliases :+ aliasName
+                    val newColorAliasEntry = (currentColor -> newAliases)
+                    val newColorAliases = colorAliases + newColorAliasEntry
+                    addRemainingLines(newColorAliases, currentColor, remainingLines.tail)
+                }
+            }
+
+        }
+
+    }
+</script>
+</body>
+</html>

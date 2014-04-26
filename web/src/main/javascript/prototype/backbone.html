@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset=utf-8/>
+    <title>Backbone Prototype</title>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+</head>
+<body>
+<div class="my-container">
+
+</div>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.1/underscore-min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.1/select2.min.js"></script>
+<!--<script type="text/template" class="my-template">-->
+    <!--<h1>Hello, world!</h1>-->
+<!--</script>-->
+
+<script type="text/template" class="my-template">
+    <div>
+        <ul>
+            <li><a href="#my-collections-tab">My Collections</a></li>
+            <li><a href="#product-search-tab">Product Search</a></li>
+        </ul>
+        <div id="my-collections-tab">
+            <select></select>
+        </div>
+        <div id="product-search-tab">
+            <input type="text" placeholder="Advertisers(s)">
+            <input type="text" placeholder="Keywords(s)">
+            <input type="text" placeholder="SKU">
+            <a class="button">Search</a>
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript">
+    var MyView, myView;
+    MyView = Backbone.View.extend({
+        initialize: function () {
+            this.render();
+        },
+        render: function () {
+            var template = _.template($(".my-template").html(), {});
+            this.$el.html(template);
+            this.$el.tabs();
+            this.$el.find('select').select2();
+        }
+    });
+    myView = new MyView({ el: $(".my-container") });
+</script>
+</body>
+</html>

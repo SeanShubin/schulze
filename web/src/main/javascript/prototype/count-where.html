@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Url Parser</title>
+    <style>
+    </style>
+</head>
+<body>
+<script type="text/javascript" src="../lib/vendor/jquery/2.0.1/jquery.js"></script>
+<script type="text/javascript" src="../lib/vendor/underscore/1.4.4/underscore.js"></script>
+<script type="text/javascript">
+    var sampleThingsToCount = [
+                {name: "Alice", countMe: true},
+                {name: "Bob", countMe: false},
+                {name: "Carol", countMe: true},
+                {name: "Dave", countMe: false},
+                {name: "Eve", countMe: true}
+            ],
+            countWhere = function (thingsToCount, predicate) {
+                var countSingleThing = function (accumulator, thing) {
+                    if (predicate(thing)) return accumulator + 1;
+                    else return accumulator;
+                };
+                return _.reduce(thingsToCount, countSingleThing, 0)
+            };
+
+    console.log(countWhere(sampleThingsToCount, function(thing){return thing.countMe}));
+    //3
+
+</script>
+</body>
+</html>

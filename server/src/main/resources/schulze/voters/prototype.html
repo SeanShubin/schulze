@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="description" content="voters"/>
+    <meta charset=utf-8/>
+    <title>Schulze - Voters</title>
+    <style type="text/css">
+        fieldset {
+            margin-top: 20px;
+            border: 1px black solid
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<h1>Voters</h1>
+<label>
+    New Voter
+    <input class="voter-name" placeholder="Enter name here" autofocus>
+    <button class="add-voter">Add Voter</button>
+</label>
+<fieldset>
+    <legend>Existing Voters</legend>
+    <ul class="voters"></ul>
+</fieldset>
+<ul>
+    <li><a href="../schulze.html">Back to Schulze</a></li>
+</ul>
+<script type="text/template" class="single-voter-template">
+    <li>
+        <a class="voter" href="/schulze/voter/voter.html?name=<%= urlEncodedName %>"><%= name %></a>
+    </li>
+</script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.1/underscore-min.js"></script>
+<script type="text/javascript">
+    var createVoterPagePrototype, fakeVoters, serverApi, body, voterTemplate, component;
+
+    //implementation
+    createVotersPagePrototype = function (options) {
+        var dom, voterTemplate, serverApi, setVoterNames, setupEventHandling, initialize, voterNameField,
+                addVoterClicked, voterNameKeypress, ENTER_KEY, contract;
+
+        ENTER_KEY = 13;
+        dom = options.dom;
+        voterTemplate = options.voterTemplate;
+        voterNameField = $(dom.find('.voter-name'));
+        serverApi = options.serverApi;
+        setVoterNames = function (names) {
+            var compiled, insertVoterNamed;
+            compiled = _.template(voterTemplate);
+            insertVoterNamed = function (name) {
+                var expanded = compiled({name: name, urlEncodedName: encodeURIComponent(name)});
+                dom.find('.voters').append(expanded)
+            };
+            dom.find('.voters').empty();
+            _.each(names, insertVoterNamed)
+        };
+        addVoterClicked = function () {
+            serverApi.addVoter(voterNameField.val());
+            voterNameField.val('');
+        };
+        voterNameKeypress = function (e) {
+            if (e.keyCode == ENTER_KEY) {
+                addVoterClicked();
+            }
+        };
+        setupEventHandling = function () {
+            dom.find('.add-voter').on('click', addVoterClicked);
+            dom.find('.voter-name').on('keypress', voterNameKeypress);
+        };
+        initialize = function () {
+            setupEventHandling();
+            serverApi.voterNames();
+        };
+        contract = {
+            dom: dom,
+            setVoterNames: setVoterNames,
+            initialize: initialize
+        };
+        return contract;
+    };
+    //fake collaborators
+    fakeVoters = ['Alice', 'Bob', 'Carol'];
+    serverApi = {
+        voterNames: function () {
+            component.setVoterNames(fakeVoters);
+        },
+        addVoter: function (voterName) {
+            fakeVoters.push(voterName);
+            component.setVoterNames(fakeVoters);
+        }
+    };
+    //wiring
+    body = $('body');
+    voterTemplate = body.find('.single-voter-template').html();
+    component = createVotersPagePrototype({
+        dom: body,
+        voterTemplate: voterTemplate,
+        serverApi: serverApi
+    });
+    //run it!
+    $(component.initialize)
+</script>
+</body>
+</html>

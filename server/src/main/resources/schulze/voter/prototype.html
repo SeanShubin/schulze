@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="description" content="voter"/>
+    <meta charset=utf-8/>
+    <title>Schulze - Voter</title>
+    <style type="text/css">
+        fieldset {
+            margin-top: 20px;
+            border: 1px black solid
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="voter-exists">
+    <h2>Voter '<span class="voter-name"></span>'</h2>
+    <button class="delete-voter">Delete</button>
+</div>
+<h2 class="voter-scheduled-for-deletion">Voter '<span class="voter-name"></span>' scheduled for deletion</h2>
+
+<h2 class="voter-does-not-exist">Voter '<span class="voter-name"></span>' does not exist</h2>
+<fieldset>
+    <legend>Elections</legend>
+    <ul class="elections">
+    </ul>
+</fieldset>
+<a href="../schulze.html">Back to Schulze</a>
+<script type="text/template" class="single-election-template">
+    <li>
+        <a class="election" href="/election/election.html?electionName=<%= urlEncodedName %>"><%= name %></a>
+    </li>
+</script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.1/underscore-min.js"></script>
+<script type="text/javascript">
+    var parseUrl, serverApi, component, componentTemplate, electionTemplate;
+    //implementation
+    function createVoterPagePrototype(options) {
+        var voterName, contract;
+
+        function notifyRegardingElections(elections) {
+            var compiled = _.template(options.electionTemplate);
+
+            function insertElection(election) {
+                var expanded = compiled({name: election.name, urlEncodedName: encodeURIComponent(election.name)});
+                options.dom.find('.elections').append(expanded)
+            }
+
+            options.dom.find('.elections').empty();
+            _.each(elections, insertElection)
+        }
+
+        function hideVoter() {
+            options.dom.find('.voter-exists').hide();
+            options.dom.find('.voter-does-not-exist').hide();
+            options.dom.find('.voter-scheduled-for-deletion').hide();
+        }
+
+        function showExistingVoter() {
+            hideVoter();
+            options.dom.find('.voter-exists').show();
+            options.dom.find('.voter-name').text(voterName);
+        }
+
+        function showDeletedVoter() {
+            hideVoter();
+            options.dom.find('.voter-does-not-exist').show();
+            options.dom.find('.voter-name').text(voterName);
+        }
+
+        function showVoterScheduledForDeletion() {
+            hideVoter();
+            options.dom.find('.voter-scheduled-for-deletion').show();
+            options.dom.find('.voter-name').text(voterName);
+        }
+
+        function notifyRegardingVoterExistence(voterExists) {
+            if (voterExists) {
+                showExistingVoter();
+            } else {
+                showDeletedVoter();
+            }
+        }
+
+        function setupEventHandling() {
+            options.dom.find('.delete-voter').on('click', function () {
+                showVoterScheduledForDeletion();
+                options.serverApi.deleteVoter(voterName);
+            });
+        }
+
+        function initialize() {
+            voterName = parseUrl(options.url).queryValuesFirstOnly.name;
+            setupEventHandling();
+            options.serverApi.interestedInElections();
+            options.serverApi.interestedInVoterExistence(voterName);
+        }
+
+        contract = {
+            dom: options.dom,
+            notifyRegardingElections: notifyRegardingElections,
+            notifyRegardingVoterExistence: notifyRegardingVoterExistence,
+            initialize: initialize
+        }
+        return contract;
+    }
+    //fake collaborators
+    parseUrl = function () {
+        return {
+            queryValuesFirstOnly: {name: 'Alice'}
+        };
+    };
+    serverApi = {
+        interestedInElections: function () {
+            component.notifyRegardingElections([
+                {name: 'Ice Cream'},
+                {name: 'Programming Language'},
+                {name: 'Restaurant'}
+            ]);
+        },
+        interestedInVoterExistence: function (voterName) {
+            component.notifyRegardingVoterExistence(true);
+        },
+        deleteVoter: function (voterName) {
+            component.notifyRegardingVoterExistence(false);
+        }
+    };
+    //wiring
+    body = $('body');
+    electionTemplate = body.find('.single-election-template').html();
+    component = createVoterPagePrototype({
+        dom: body,
+        electionTemplate: electionTemplate,
+        url: location,
+        serverApi: serverApi
+    });
+    //run it!
+    $(component.initialize)
+</script>
+</body>
+</html>

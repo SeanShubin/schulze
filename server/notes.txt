@@ -1,0 +1,49 @@
+/------------+------------+---------+-------------\
+| table      | attribute  | type    | cardinality |
++------------+------------+---------+-------------+
+| election   | name       | string  | one         |
+| candidate  | name       | string  | one         |
+| election   | candidate  | ref     | many        |
+| voter      | name       | string  | one         |
+| voter      | vote       | ref     | many        |
+| vote       | election   | ref     | one         |
+| vote       | ranking    | ref     | many        |
+| ranking    | candidate  | ref     | one         |
+| ranking    | rank       | int     | one         |
+\------------+------------+---------+-------------/
+
+/------------+------------+---------+-------------\
+| table      | attribute  | type    | cardinality |
++------------+------------+---------+-------------+
+| election   | name       | string  | one         |
+| candidate  | name       | string  | one         |
+| candidate  | election   | ref     | one         |
+| voter      | name       | string  | one         |
+| vote       | voter      | ref     | one         |
+| vote       | election   | ref     | one         |
+| ranking    | vote       | ref     | one         |
+| ranking    | candidate  | ref     | one         |
+| ranking    | rank       | int     | one         |
+\------------+------------+---------+-------------/
+
+
+I don't have experience with triple stores yet, so I am hoping for some general guidance with how to make decisions like this.
+
+First consider elections and candidates, I see 2 choices and am not sure how to decide between them.
+I could represent a candidate as a child of an election, like so:
+    election/candidate ref many
+Or I could represent an election as an attribute of a candidate, like so:
+    candidate/election ref one
+
+It gets more complicated if I add votes to the mix, because a vote depends on both an election and a voter, so now I have 3 choices.
+A vote has a voter and an election:
+    vote/voter ref one
+    vote/election ref one
+A voter has many votes, each vote belonging to an election:
+    voter/vote ref many
+    vote/election ref one
+An election has many votes, each vote belonging to a voter:
+    election/vote ref many
+    vote/voter ref one
+
+Can anyone point me in the right direction regarding what I should consider when making decisions like this?

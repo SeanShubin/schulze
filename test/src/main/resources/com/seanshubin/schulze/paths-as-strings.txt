@@ -1,0 +1,28 @@
+given subject
+    paths as strings
+when input is
+    candidates
+        alice
+        bob
+        carol
+    paths
+        alice carol bob
+        alice carol
+        bob alice
+        bob alice carol
+        carol alice
+        carol alice bob
+    preferences
+        alice > bob   = 4
+        alice > carol = 2
+        bob   > alice = 6
+        bob   > carol = 1
+        carol > alice = 5
+        carol > bob   = 3
+then expect output to be
+    alice-(2)-carol-(3)-bob
+    alice-(2)-carol
+    bob-(6)-alice
+    bob-(6)-alice-(2)-carol
+    carol-(5)-alice
+    carol-(5)-alice-(4)-bob

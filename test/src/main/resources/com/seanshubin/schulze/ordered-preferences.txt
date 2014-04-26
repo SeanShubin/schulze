@@ -1,0 +1,10 @@
+given subject
+    ordered preferences
+when input is
+    alice
+    bob
+    carol
+then expect output to be
+    alice > bob = 1
+    alice > carol = 1
+    bob > carol = 1

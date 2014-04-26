@@ -1,0 +1,26 @@
+Elections Requirements
+* public vs. secret ballot
+* individual vs. aggregate
+* fixed voting time window
+* fixed candidates
+* fixed voters
+* voter groups
+* track election creation time
+* authentication
+* fraud detection
+* cluster analysis
+
+Main page
+* elections
+* voters
+
+Elections page
+* display election information
+** id
+** name
+** state
+*** not started - allow modify candidates/voters, don't allow votes
+*** started - disallow modify candidates/voters, allow votes
+*** finished - disallow modify candidates/voters, disallow votes
+** vote deadline
+

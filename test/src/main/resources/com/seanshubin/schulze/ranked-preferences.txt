@@ -1,0 +1,17 @@
+given subject
+    ranked preferences
+when input is
+    alice 1
+    bob 1
+    carol 2
+    dave 3
+    eve 3
+then expect output to be
+    alice > carol = 1
+    alice > dave = 1
+    alice > eve = 1
+    bob > carol = 1
+    bob > dave = 1
+    bob > eve = 1
+    carol > dave = 1
+    carol > eve = 1

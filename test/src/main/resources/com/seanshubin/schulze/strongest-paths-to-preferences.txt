@@ -1,0 +1,28 @@
+given subject
+    strongest paths to preferences
+when input is
+    candidates
+        spoiler
+        mediocre
+        preferred
+    preference strengths
+        spoiler   > mediocre  = 4
+        spoiler   > preferred = 4
+        mediocre  > spoiler   = 5
+        mediocre  > preferred = 3
+        preferred > spoiler   = 5
+        preferred > mediocre  = 6
+    strongest paths
+        spoiler mediocre
+        spoiler preferred
+        mediocre spoiler
+        mediocre spoiler preferred
+        preferred spoiler
+        preferred mediocre
+then expect output to be
+    spoiler > mediocre = 4
+    spoiler > preferred = 4
+    mediocre > spoiler = 5
+    mediocre > preferred = 4
+    preferred > spoiler = 5
+    preferred > mediocre = 6

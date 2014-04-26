@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="description" content="candidate"/>
+    <meta charset=utf-8/>
+    <title>Schulze - Candidate</title>
+    <style type="text/css">
+        fieldset {
+            margin-top: 20px;
+            border: 1px black solid
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="candidate-exists-section">
+    <h2>Candidate '<span class="candidate-name"></span>' in election '<span class="election-name"></span>'<button class="delete-candidate">Delete</button></h2>
+    <label>
+        Description
+        <textarea class="candidate-description"></textarea>
+    </label>
+    <button class="save-description">Save</button>
+</div>
+<h2 class="candidate-scheduled-for-deletion-section">Candidate '<span class="candidate-name"></span>' scheduled for deletion from election '<span class="election-name"></span>'</h2>
+<h2 class="loading-candidate-from-server-section">Loading candidate '<span class="candidate-name"></span>' from election '<span class="election-name"></span>'</h2>
+<h2 class="candidate-does-not-exist-section">Candidate '<span class="candidate-name"></span>' does not exist in election '<span class="election-name"></span>'</h2>
+<h2 class="problem-with-server-section">Problem loading candidate '<span class="candidate-name"></span>' from election '<span class="election-name"></span>', refresh your browser or try again later</h2>
+<ul>
+    <li><a class='election-page-link'>Election '<span class="election-name"></span>'</a></li>
+    <li><a href="../elections/elections.html">Elections</a></li>
+    <li><a href="../voters/voters.html">Voters</a></li>
+</ul>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.1/underscore-min.js"></script>
+<script type="text/javascript">
+    define([], function () {
+        'use strict';
+        function candidatePage(options) {
+            var view = options.view,
+                    sendRequest = options.sendRequest,
+                    electionName = options.electionName,
+                    candidateName = options.candidateName,
+                    candidateExistsSection = view.find('.candidate-exists-section'),
+                    candidateDoesNotExistSection = view.find('.candidate-does-not-exist-section'),
+                    candidateScheduledForDeletionSection = view.find('.candidate-scheduled-for-deletion-section'),
+                    loadingCandidateFromServerSection = view.find('.loading-candidate-from-server-section'),
+                    problemWithServer = view.find('.problem-with-server-section'),
+                    descriptionEditor = view.find('.candidate-description'),
+                    deleteCandidateButton = view.find('.delete-candidate'),
+                    saveDescriptionButton = view.find('.save-description');
+
+            function isSuccess(status) {
+                return status >= 200 && status < 400;
+            }
+
+            function hideAllSections() {
+                candidateExistsSection.hide();
+                candidateDoesNotExistSection.hide();
+                candidateScheduledForDeletionSection.hide();
+                loadingCandidateFromServerSection.hide();
+                problemWithServer.hide();
+            }
+
+            function onDeleteCandidate(){
+                hideAllSections();
+                candidateScheduledForDeletionSection.show();
+                sendRequest({
+                            method: 'DELETE',
+                            uri: '/elections/' + encodeURIComponent(electionName) + '/candidates/' + encodeURIComponent(candidateName)},
+                        function (response) {
+                            getCandidate();
+                        });
+            }
+
+            function onBeginEditing(){
+                saveDescriptionButton.show();
+            }
+
+            function isBlank(str) {
+                return (!str || /^\s*$/.test(str));
+            }
+
+            function onEndEditing(){
+                var body;
+                if(isBlank(descriptionEditor.val())) {
+                    body = {name: candidateName}
+                } else {
+                    body = {name: candidateName, description: descriptionEditor.val()}
+                }
+                sendRequest({
+                            method: 'PATCH',
+                            uri: '/elections/' + encodeURIComponent(electionName) + '/candidates/' + encodeURIComponent(candidateName),
+                            body: body
+                        },
+                        function (response) {
+                            if (isSuccess(response.status)) {
+                                saveDescriptionButton.hide();
+                            }
+                        });
+            }
+
+            function setupEventHandling() {
+                deleteCandidateButton.on('click', onDeleteCandidate);
+                descriptionEditor.on('change', onBeginEditing);
+                descriptionEditor.on('keydown', onBeginEditing);
+                descriptionEditor.on('keypress', onBeginEditing);
+                descriptionEditor.on('keyup', onBeginEditing);
+                saveDescriptionButton.on('click', onEndEditing)
+            }
+
+            function updateCandidateDescription(description){
+                descriptionEditor.val(description)
+            }
+
+            function getCandidate(){
+                hideAllSections();
+                loadingCandidateFromServerSection.show();
+                sendRequest({
+                            method: 'GET',
+                            uri: '/elections/' + encodeURIComponent(electionName) + '/candidates/' + encodeURIComponent(candidateName)},
+                        function (response) {
+                            hideAllSections();
+                            if (isSuccess(response.status)) {
+                                candidateExistsSection.show();
+                                updateCandidateDescription(response.body.description)
+                            } else if (response.status == 404) {
+                                candidateDoesNotExistSection.show();
+                            } else {
+                                problemWithServer.show();
+                            }
+                        });
+
+            }
+
+            function initialize() {
+                view.find('.election-name').text(electionName)
+                view.find('.candidate-name').text(candidateName)
+                view.find('.election-page-link').attr('href', '../election/election.html?name=' + encodeURIComponent(electionName));
+                saveDescriptionButton.hide();
+                getCandidate();
+                setupEventHandling();
+            }
+
+            initialize();
+        }
+
+        return candidatePage;
+    });
+</script>
+</body>
+</html>

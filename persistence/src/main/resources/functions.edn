@@ -1,0 +1,19 @@
+{
+  :db/id #db/id[:db.part/user]
+  :db/ident :createElection
+  :db/fn #db/fn {
+    :lang "java"
+    :params [dbObject nameObject]
+    :code "import java.util.Collection;
+           import java.util.List;
+           Database db = (Database) dbObject;
+           String name = (String) nameObject;
+           String query = \"[:find ?election :in $ ?electionName :where \" +
+                   \"[?election :election/name ?electionName]]\";
+           Collection<List<Object>> rows = q(query, db, name);
+           if(rows.size() > 0) return list();
+           else return list(map(
+                   \":db/id\", tempid(\":db.part/user\"),
+                   \":election/name\", name));"
+  }
+}

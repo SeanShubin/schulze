@@ -1,0 +1,15 @@
+given subject
+    grouped preferences
+when input is
+    alice bob
+    carol
+    dave eve
+then expect output to be
+    alice > carol = 1
+    alice > dave = 1
+    alice > eve = 1
+    bob > carol = 1
+    bob > dave = 1
+    bob > eve = 1
+    carol > dave = 1
+    carol > eve = 1

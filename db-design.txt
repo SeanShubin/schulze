@@ -1,0 +1,7 @@
+election/name      string one
+election/candidate ref    many
+candidate/name     string one
+voter/name         string one
+preference/voter   ref    one
+preference/winner  ref    one
+preference/loser   ref    one

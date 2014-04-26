@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Deferred</title>
+    <style>
+    </style>
+</head>
+<body>
+<script type="text/javascript" src="../lib/vendor/jquery/2.0.1/jquery.js"></script>
+<script type="text/javascript" src="../lib/vendor/underscore/1.4.4/underscore.js"></script>
+<script type="text/javascript">
+    function println(line){
+        document.writeln('<p>'+line+'</p>');
+    }
+
+    function runLater(fn, time) {
+        var deferred = $.Deferred();
+        window.setTimeout(function() {
+          deferred.resolve(fn());
+        }, time);
+        return deferred.promise();
+    }
+
+    var futureTwo = runLater(function(){ return 2; }, 25);
+    var futureThree = runLater(function(){ return 3; }, 75);
+
+    function multiply(x,y) {
+        return runLater(function(){return x * y;}, 50);
+    }
+
+    $.when(futureTwo.promise(), futureThree.promise())
+            .then(multiply)
+            .then(println);
+
+/* scala version
+     import akka.actor.ActorSystem
+     import scala.concurrent.{Await, Future}
+     import scala.concurrent.duration.Duration
+     import scala.util.{Failure, Success}
+
+     object FutureSample extends App {
+         val actorSystem:ActorSystem = ActorSystem()
+         implicit val executionContext = actorSystem.dispatcher
+         val futureTwo = Future[Int] { 2 }
+         val futureThree = Future[Int] { 3 }
+         val futureResult = for {
+             two <- futureTwo
+             three <- futureThree
+         } yield two * three
+         //Don't use Await except for samples or tests (this is a sample)
+         //Don't use an infinite duration except in samples (this is a sample)
+         //The only reason I can think of to use await in production code is to cleanly shut down (don't use infinite duration)
+         Await.result(futureResult, Duration.Inf)
+         val resultDescription = futureResult.value match {
+             case Some(Success(value)) => "success: " + value
+             case Some(Failure(exception)) => "failure: " + exception.getMessage
+             case None => "don't have an answer yet"
+         }
+         println(resultDescription)
+     }
+     //success: 6
+ */
+</script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+given subject
+    schulze script runner
+when input is
+    add voter 'alice'
+    add voter 'bob'
+    add voter 'carol'
+    add voter 'dave'
+    add voter 'eve'
+    add voter 'mallory'
+    add voter 'trent'
+    add voter 'walter'
+    add voter 'peggy'
+    add voter 'victor'
+
+    add election 'election'
+
+    in election 'election' add candidate 'spoiler'
+    in election 'election' add candidate 'mediocre'
+    in election 'election' add candidate 'preferred'
+
+    in election 'election' voter 'alice'   casts (1 spoiler 2 preferred 3 mediocre)
+    in election 'election' voter 'bob'     casts (1 mediocre 2 preferred 3 spoiler)
+    in election 'election' voter 'carol'   casts (1 preferred 2 mediocre 3 spoiler)
+    in election 'election' voter 'dave'    casts (1 spoiler 2 preferred 3 mediocre)
+    in election 'election' voter 'eve'     casts (1 mediocre 2 preferred 3 spoiler)
+    in election 'election' voter 'mallory' casts (1 spoiler 2 preferred 3 mediocre)
+    in election 'election' voter 'trent'   casts (1 mediocre 2 preferred 3 spoiler)
+    in election 'election' voter 'walter'  casts (1 spoiler 2 preferred 3 mediocre)
+    in election 'election' voter 'peggy'   casts (1 preferred 2 mediocre 3 spoiler)
+
+    tally election 'election'
+then expect output to be
+    Candidates
+        spoiler
+        mediocre
+        preferred
+    Preference Strengths
+        spoiler > mediocre = 4
+        spoiler > preferred = 4
+        mediocre > spoiler = 5
+        mediocre > preferred = 3
+        preferred > spoiler = 5
+        preferred > mediocre = 6
+    Preference Strength Matrix
+                  spoiler mediocre preferred
+        spoiler           4        4
+        mediocre  5                3
+        preferred 5       6
+    Detailed number crunching (warshall algorithm)
+        spoiler-(4)-mediocre
+        spoiler-(4)-preferred
+        mediocre-(5)-spoiler
+        mediocre-(3)-preferred
+        preferred-(5)-spoiler
+        preferred-(6)-mediocre
+    Alternatives using candidate spoiler
+        mediocre-(5)-spoiler-(4)-preferred
+        preferred-(5)-spoiler-(4)-mediocre
+    Strongest paths after resolving alternatives using spoiler
+        spoiler-(4)-mediocre
+        spoiler-(4)-preferred
+        mediocre-(5)-spoiler
+        mediocre-(5)-spoiler-(4)-preferred
+        preferred-(5)-spoiler
+        preferred-(6)-mediocre
+    Alternatives using candidate mediocre
+        spoiler-(4)-mediocre-(5)-spoiler-(4)-preferred
+        preferred-(6)-mediocre-(5)-spoiler
+    Strongest paths after resolving alternatives using mediocre
+        spoiler-(4)-mediocre
+        spoiler-(4)-preferred
+        mediocre-(5)-spoiler
+        mediocre-(5)-spoiler-(4)-preferred
+        preferred-(5)-spoiler
+        preferred-(6)-mediocre
+    Alternatives using candidate preferred
+        spoiler-(4)-preferred-(6)-mediocre
+        mediocre-(5)-spoiler-(4)-preferred-(5)-spoiler
+    Strongest paths after resolving alternatives using preferred
+        spoiler-(4)-mediocre
+        spoiler-(4)-preferred
+        mediocre-(5)-spoiler
+        mediocre-(5)-spoiler-(4)-preferred
+        preferred-(5)-spoiler
+        preferred-(6)-mediocre
+    Strengths of the strongest paths
+        spoiler > mediocre = 4
+        spoiler > preferred = 4
+        mediocre > spoiler = 5
+        mediocre > preferred = 4
+        preferred > spoiler = 5
+        preferred > mediocre = 6
+    Strongest Path Matrix
+                  spoiler mediocre preferred
+        spoiler           4        4
+        mediocre  5                4
+        preferred 5       6
+    Ranking
+        preferred
+        mediocre
+        spoiler

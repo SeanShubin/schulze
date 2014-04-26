@@ -1,0 +1,82 @@
+Guidelines Sean Shubin has discovered for writing maintainable javascript code
+
+These are not so much my opinions as they are my discoveries.
+I have never written a large application in javascript, and since we are currently using a lot of javascript, I am paying attention about how to write maintainable code in javascript.
+The trick seems to be figuring out how to overcome javascript's limitations to get the same maintainability benefits you get from languages with expressive contracts (such as interfaces).
+
+(principles)
+cohesion - place the same responsibility in one place
+coupling - keep separate concerns isolated to collaborators
+
+(testable)
+code should be easy to test
+this may require you to decouple parts that are hard to test
+
+(relevant tests)
+test your logic, not implementation details of your environment
+this may require you to fake/mock/stub the parts of the tests that interact with the environment
+
+(isolated tests)
+one test should not be able to affect another
+this means they must be responsible for all of their own sample data
+they also must not mutate a global variable another test can see
+
+(deterministic tests)
+tests should not be flaky
+decouple from non-deterministic parts
+use fake/mock/stub for interacting with non-deterministic parts
+
+(manage your dependencies)
+find some way to ensure dependencies are loaded in the proper order, transitively if necessary, and not loaded repeatedly
+require.js seems to do a good job of this
+
+(depend on factories)
+for code under your control
+don't directly depend on anything with mutable state, side effects, or that mutates a global
+depend on a factory that creates that thing instead
+this allows you to override collaborators in the factory's create method
+and allows each test to create a separate instance of the test subject
+which isolates tests from one another
+and makes your code easy to test
+
+(separate logic from side-effects)
+if the same thing has logic and side effects, split it in to two parts
+one for the logic, another for the side effects
+this allows you to write tests for the logic without side effecting
+
+(cyclomatic complexity)
+don't over test things with cyclomatic complexity of 1
+if you followed (separate logic from side-effects), all side effecting code will have a cyclomatic complexity of 1
+this is mainly for pass throughs to side effecting code such as ajax
+a very few smoke tests will suffice to make sure you don't have any typos
+all other code should be depending on a fake/mock/stub
+code with cyclomatic complexity of 1 is usually either configuration or a script with no logic in it
+
+(use test rather than asyncTest)
+if you followed rule (depend on factories), you don't need squire, and therefore don't need asyncTest for anything not side effecting
+if you followed rule (separate logic from side-effects), only a small number of things will be side effecting
+if you followed rule (cyclomatic complexity), you should need very few async tests per side effecting thing
+async tests are non-deterministic, and non-determinism is unnecessary the vast majority of the time
+
+(don't use global variables)
+global variables are bad even if they are not concurrently mutated because they allow one piece of code to affect another in surprising ways
+if you followed (depend on factories), you can keep a local instance of the test subject and ensure one test does not affect another
+depending on a factory for your ajax needs allows you to easily use a local fake ajax
+this also allows you to avoid sinon's fake XmlHttpRequest, which due to its behavior of manipulating the global ajax, requires you to call xhr.restore()
+
+(only use id in top level documents)
+better yet, leave the body empty and create a wiring.js file in charge of adding appropriate components to the top level body
+id fields are supposed to be unique, which is impossible to enforce if your components are properly decoupled
+instead use jQuery's .find() from your component's root document, using class specifiers instead of ids
+
+(isolate mutable state)
+have your components expose nothing but their root document (use a factory to enforce this)
+have your tests interact with your components via their root document
+your root document will usually be mutable state, so be sure guard this by only exposing the component through a factory
+
+(make parameters easy to test)
+group multiple non-callback parameters into a single {}
+keep callbacks as separate parameters
+
+(avoid complicated selectors)
+instead, attach a class to each thing you want to select

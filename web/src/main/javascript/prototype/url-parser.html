@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Url Parser</title>
+    <style>
+        ul {
+            /*list-style-type: none;*/
+            /*padding: 0;*/
+            /*margin: 0;*/
+        }
+        .urlLabel {
+            width: 5em;
+            display: inline-block;
+        }
+
+        .urlText {
+            width: 50em;
+        }
+
+        .urlPartLabel {
+            width: 5em;
+            display: inline-block;
+        }
+
+        .urlPartText {
+            width: 30em;
+        }
+    </style>
+</head>
+<body>
+<ul>
+    <li>
+        <label>
+            <span class="urlLabel">url</span>
+            <input class="urlText" value="scheme://domain:12345/path?query#fragment" autofocus>
+        </label>
+    </li>
+    <li>
+        <label>
+            <span class="urlPartLabel">scheme</span>
+            <input class="urlPartText scheme">
+        </label>
+    </li>
+    <li>
+        <label>
+            <span class="urlPartLabel">domain</span>
+            <input class="urlPartText domain">
+        </label>
+    </li>
+    <li>
+        <label>
+            <span class="urlPartLabel">port</span>
+            <input class="urlPartText port">
+        </label>
+    </li>
+    <li>
+        <label>
+            <span class="urlPartLabel">path</span>
+            <input class="urlPartText path">
+        </label>
+    </li>
+    <li>
+        <label>
+            <span class="urlPartLabel">query</span>
+            <input class="urlPartText query">
+        </label>
+    </li>
+    <li>
+        <label>
+            <span class="urlPartLabel">fragment</span>
+            <input class="urlPartText fragment">
+        </label>
+    </li>
+</ul>
+<ul class="queryParts"></ul>
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+<script type="text/javascript">
+    function keyValueStringToPair(keyValueString){
+        var parts;
+        parts = keyValueString.split("=");
+        return {
+            key: parts[0],
+            value: parts[1]
+        }
+    }
+    function queryToKeyValueArray(query) {
+        var keyValueStrings, keyValuePairs;
+        keyValueStrings = query.split("&");
+        keyValuePairs = _.map(keyValueStrings, keyValueStringToPair);
+        return keyValuePairs;
+    }
+    function parseUrl(text) {
+        var urlRegex, scheme, domain, port, path, query, fragment, parts;
+        scheme = '(?:([^:]*)://)?';
+        domain = '([^:/]*)?';
+        port = '(?::([^/?#]*))?';
+        path = '(?:(/[^?#]*))?';
+        query = '(?:\\?([^#]*))?';
+        fragment = '(?:#(.*))?';
+        urlRegex = new RegExp(scheme + domain + port + path + query + fragment);
+        parts = urlRegex.exec(text);
+        return {
+            scheme: parts[1],
+            domain: parts[2],
+            port: parts[3],
+            path: parts[4],
+            query: parts[5],
+            fragment: parts[6],
+            queryParts: queryToKeyValueArray(parts[5])
+        };
+    }
+    function updateParsed() {
+        var value, result;
+        value = $('.urlText').val();
+        result = parseUrl(value);
+        $('.scheme').val(result.scheme);
+        $('.domain').val(result.domain);
+        $('.port').val(result.port);
+        $('.path').val(result.path);
+        $('.query').val(result.query);
+        $('.fragment').val(result.fragment);
+        updateQueryParts(result.queryParts);
+    }
+    function updateQueryParts(parts) {
+        var child;
+        $('.queryParts').empty();
+        _.each(parts, function(part){
+            child = '<li><ul><li>'+ part.key +'</li><li>'+ part.value +'</li></ul></li>';
+            $('.queryParts').append($(child));
+        });
+    }
+    $(".urlText").keyup(updateParsed);
+    updateParsed();
+    console.log(document.URL);
+</script>
+</body>
+</html>

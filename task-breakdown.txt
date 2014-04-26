@@ -1,0 +1,37 @@
+***prioritized***
+Make persistence api thread safe by moving transaction logic into transaction functions
+Limit on candidate name length
+  allow user to add description at the same time as name
+Show candidates with no support
+
+*****************
+
+
+use more general 'name' where appropriate
+better gui error handling for unsupported requests
+make sure all prototypes use content delivery networks
+rename files for simplicity
+refactor fakes to derive from empty
+server side error handling
+get server api under test coverage
+add use strict everywhere
+use single quotes where possible
+error event tracker
+remove all jslint and jshint warnings
+make json over http test thread safe
+need escaping for both urls and html
+
+
+
+***done***
+disallow duplicates
+tally page
+durability
+server side validation
+convert voters page to style used by voter page
+make sure voters page still works with server
+    implement server api
+    wire voters page into server api
+wire voter page into server api
+don't count deleted voters
+make vote page handle deleted voter

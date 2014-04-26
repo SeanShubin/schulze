@@ -1,0 +1,43 @@
+You will need to decide
+    a directory for the datomic binaries
+    a file for the datomic configuration file
+    a directory for the datomic data files
+    a directory for the datomic log files
+
+Download and unzip the binaries for the latest free edition of datomic
+http://downloads.datomic.com/free.html
+
+Copy the configuration file from
+    <datomic binaries>/config/samples/free-transactor-template.properties
+    Uncomment and edit the "data-dir" and "log-dir" directories in the new configuration file
+
+Start datomic, passing the configuration file as the only parameter
+    bin/transactor <datomic-config.properties>
+
+
+Unzip the schulze.zip file
+Change to the directory of the unzipped files
+Launch the schulze server application
+    first parameter is the port
+    second parameter is the datomic uri
+java -cp "schulze-server-1.0-SNAPSHOT.jar:*" com.seanshubin.schulze.server.ServerApplication 12345 datomic:free://localhost:4334/schulze
+Wait for the message "Datomic Ready"
+
+
+
+
+
+
+/****************************\
+| this is what you would do  |
+| if clojure supported being |
+| loaded from the classpath  |
+| rather than the filesystem |
+\****************************/
+Launch the schulze one-jar
+    first parameter is the port
+    second parameter is the datomic uri
+For example
+    java -jar schulze-server-1.0-SNAPSHOT.one-jar.jar 12345 datomic:free://localhost:4334/schulze
+Wait for the message "Datomic Ready"
+

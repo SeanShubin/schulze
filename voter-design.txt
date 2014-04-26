@@ -1,0 +1,10 @@
+input
+    set elections
+        [ {id: 1, name: 'ElectionA'},
+          {id: 2, name: 'ElectionB'},
+          {id: 3, name: 'ElectionC'}]
+    set voter
+        {id:1, name:'VoterA', deleted:false}
+output
+    delete voter
+        {id:1}

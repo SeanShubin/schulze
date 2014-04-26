@@ -1,0 +1,18 @@
+given subject
+    ranking
+when input is
+    candidates
+        spoiler
+        mediocre
+        preferred
+    preference strengths
+        spoiler > mediocre = 4
+        spoiler > preferred = 4
+        mediocre > spoiler = 5
+        mediocre > preferred = 3
+        preferred > spoiler = 5
+        preferred > mediocre = 6
+then expect output to be
+    preferred
+    mediocre
+    spoiler

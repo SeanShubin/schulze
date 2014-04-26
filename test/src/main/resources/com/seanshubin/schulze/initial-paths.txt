@@ -1,0 +1,13 @@
+given subject
+    initial paths
+when input is
+    alice
+    bob
+    carol
+then expect output to be
+    alice bob
+    alice carol
+    bob alice
+    bob carol
+    carol alice
+    carol bob

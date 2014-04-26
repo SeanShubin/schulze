@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="description" content="vote"/>
+    <meta charset=utf-8/>
+    <title>Schulze - Vote</title>
+    <style type="text/css">
+        fieldset {
+            margin-top: 20px;
+            border: 1px black solid
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        input {
+            width: 2em;
+            margin-right: 1em;
+        }
+    </style>
+</head>
+<body>
+<h2>Vote cast by '<span class="voter-name"></span>' in election '<span class="election-name"></span>'
+    <button class="reset-vote">Reset</button>
+</h2>
+<p>
+    Rank your candidates in order of preference<br>
+    1 for your most preferred, 2 for your second most preferred and so on<br>
+    It is ok for two candidates to have the same rank<br>
+    Unranked candidates are considered tied for last place in your preferences<br>
+</p>
+<fieldset>
+    <legend>Vote</legend>
+    <ul class="rankings"></ul>
+    <button class="apply-rankings">Apply Rankings</button>
+</fieldset>
+<ul>
+    <li><a class='election-page-link'>Back to election '<span class="election-name"></span>'</a></li>
+    <li><a class='voter-page-link'>Back to voter '<span class="voter-name"></span>'</a></li>
+</ul>
+<script type="text/template" class="ranking-template">
+    <li class="ranking-pair">
+        <input class="ranking-input" type="text" value="<%= rank %>"><span class="ranking-candidate"><%= candidate %></span>
+    </li>
+</script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.1/underscore-min.js"></script>
+<script type="text/javascript">
+    var parseUrl, serverApi, component, fakeRankings, rankingTemplate;
+    //implementation
+    function createVotePagePrototype(options) {
+        var voterName, electionName, contract;
+
+        function extractRanking(element){
+            var rank, candidate;
+            rank =  $(element).find('.ranking-input').val();
+            candidate = $(element).find('.ranking-candidate').html();
+            return {rank: rank, candidate: candidate};
+        }
+
+        function applyRankingsPressed(){
+            var ranks = _.map(options.dom.find('.ranking-pair'), extractRanking);
+            serverApi.castVote(ranks);
+        }
+
+        function rankingKeypress(){
+            options.dom.find('.apply-rankings').show();
+        }
+        function resetVotePressed(){
+            var vote = _.map(options.dom.find('.ranking-candidate'), function(e){
+                return {
+                    candidate: $(e).html(),
+                    rank: ''
+                }
+            })
+            serverApi.castVote(vote);
+        }
+        function setupEventHandling() {
+            options.dom.find('.apply-rankings').on('click', applyRankingsPressed);
+            options.dom.find('.reset-vote').on('click', resetVotePressed);
+        }
+
+        function selectAllText(){
+            var $this = $(this);
+            $this.select();
+
+            // Work around Chrome's little problem
+            $this.mouseup(function() {
+                // Prevent further mouseup intervention
+                $this.unbind("mouseup");
+                return false;
+            });        }
+
+        function initialize() {
+            electionName = parseUrl(options.url).queryValuesFirstOnly.election;
+            voterName = parseUrl(options.url).queryValuesFirstOnly.voter;
+            options.dom.find('.voter-name').text(voterName);
+            options.dom.find('.election-name').text(electionName);
+            setupEventHandling();
+            serverApi.interestedInRankings({electionName: electionName, voterName: voterName});
+        }
+
+        function updatedRankings(rankings) {
+            var compiled = _.template(options.rankingTemplate);
+
+            function insertRanking(ranking) {
+                var expanded = compiled({candidate: ranking.candidate, rank: ranking.rank});
+                options.dom.find('.rankings').append(expanded)
+            }
+
+            options.dom.find('.ranking-input').unbind();
+            options.dom.find('.rankings').empty();
+            _.each(rankings, insertRanking)
+            options.dom.find('.ranking-input').on('keypress', rankingKeypress);
+            options.dom.find('.ranking-input').on('focus', selectAllText);
+            options.dom.find('.apply-rankings').hide();
+        }
+
+        contract = {
+            dom: options.dom,
+            updatedRankings: updatedRankings,
+            initialize: initialize
+        }
+        return contract;
+    }
+    //fake collaborators
+    fakeRankings = [
+        {candidate: 'Vanilla', rank: 1},
+        {candidate: 'Chocolate', rank: 2},
+        {candidate: 'Strawberry', rank: 3}
+    ];
+    parseUrl = function () {
+        return {
+            queryValuesFirstOnly: {election: 'Ice Cream', voter: 'Alice'}
+        };
+    };
+    serverApi = {
+        interestedInRankings: function (options) {
+            component.updatedRankings(fakeRankings);
+        },
+        castVote: function(vote){
+            component.updatedRankings(vote);
+        }
+
+    };
+    //wiring
+    body = $('body');
+    rankingTemplate = $('.ranking-template').html();
+    component = createVotePagePrototype({
+        dom: body,
+        url: location,
+        rankingTemplate: rankingTemplate,
+        serverApi: serverApi
+    });
+    //run it!
+    $(component.initialize)
+</script>
+</body>
+</html>

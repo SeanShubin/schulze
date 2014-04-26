@@ -1,0 +1,111 @@
+<div class="election-exists-section">
+    <h2>Results for election '<span class="election-name"></span>'</h2>
+    <fieldset>
+        <legend>Places</legend>
+        <table class="places">
+        </table>
+    </fieldset>
+    <button class="show-details">Show Details</button>
+    <button class="hide-details">Hide Details</button>
+    <ul>
+        <li><a class='election-page-link'>Election '<span class="election-name"></span>'</a></li>
+        <li><a href="../elections/elections.html">Elections</a></li>
+        <li><a href="../voters/voters.html">Voters</a></li>
+    </ul>
+    <div class="details-section">
+        <fieldset>
+            <legend>Votes</legend>
+            <p>Participating voters and their effective rankings</p>
+            <table>
+                <thead>
+                <tr class="candidate-names"></tr>
+                </thead>
+                <tbody class="votes">
+                </tbody>
+            </table>
+        </fieldset>
+        <fieldset>
+            <legend>Preferences</legend>
+            <p>Read each row of this table as<br>
+                {voters} voters prefer {winner} over {loser}</p>
+            <table>
+                <thead>
+                <tr>
+                    <th>winner</th>
+                    <th>voters</th>
+                    <th>loser</th>
+                </tr>
+                </thead>
+                <tbody class="preferences">
+                </tbody>
+            </table>
+        </fieldset>
+        <fieldset>
+            <legend>Preference Matrix</legend>
+            <p>Same data as 'Preferences' section, in tabular form.<br>
+                Winners at left, losers along top</p>
+            <table>
+                <thead class="preference-matrix-header">
+                </thead>
+                <tbody class="preference-matrix-body">
+                </tbody>
+            </table>
+        </fieldset>
+        <fieldset>
+            <legend>Floyd-Warshall algorithm</legend>
+            <p>The Floyd-Warshall algorithm is a bit detailed but well documented in computer science literature<br>
+               See this brief <a href="/schulze/introduction.txt">introduction</a> for information regarding how it is used here
+            </p>
+            <div class="floyd-warshall"></div>
+        </fieldset>
+        <fieldset>
+            <legend>Strongest Paths</legend>
+            <p>Final results of Floyd-Warshall algorithm<br>
+            <table>
+                <thead>
+                <tr>
+                    <th>winner</th>
+                    <th>strength</th>
+                    <th>loser</th>
+                </tr>
+                </thead>
+                <tbody class="strongest-paths"></tbody>
+            </table>
+        </fieldset>
+        <fieldset>
+            <p>Same data as 'Strongest Paths' section, in tabular form.<br>
+                Winners at left, losers along top</p>
+            <legend>Strongest Path Matrix</legend>
+            <table>
+                <thead class="strongest-paths-header">
+                </thead>
+                <tbody class="strongest-paths-body">
+                </tbody>
+            </table>
+        </fieldset>
+        <fieldset>
+            <p>Places are determined by Schwartz Sequential Dropping<br>
+            Which essentially means that we put the undefeated candidates in first place<br>
+            And repeat the process on the remaining candidates to figure out second, third and so on<br>
+            </p>
+            <legend>Places</legend>
+            <table class="places">
+            </table>
+        </fieldset>
+        <ul>
+            <li><a class='election-page-link'>Election '<span class="election-name"></span>'</a></li>
+            <li><a href="../elections/elections.html">Elections</a></li>
+            <li><a href="../voters/voters.html">Voters</a></li>
+        </ul>
+    </div>
+</div>
+<div class="election-does-not-exist-section">
+    <h2>Election '<span class="election-name"></span>' does not exist</h2>
+    <ul>
+        <li><a href="../elections/elections.html">Elections</a></li>
+        <li><a href="../voters/voters.html">Voters</a></li>
+    </ul>
+</div>
+<div class="problem-with-server-section">
+    <h2>Problem with server</h2>
+</div>
