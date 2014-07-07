@@ -51,7 +51,7 @@
             <plugin>
                 <groupId>org.dstovall</groupId>
                 <artifactId>onejar-maven-plugin</artifactId>
-                <version>1.4.4</version>
+                <version>1.4.5</version>
                 <executions>
                     <execution>
                         <configuration>
@@ -59,6 +59,9 @@
                                 com.seanshubin.schulze.server.ServerApplication
                             </mainClass>
                             <filename>schulze-server.jar</filename>
+                            <manifestEntries>
+                                <One-Jar-URL-Factory>com.simontuffs.onejar.JarClassLoader$OneJarURLFactory</One-Jar-URL-Factory>
+                            </manifestEntries>
                         </configuration>
                         <goals>
                             <goal>one-jar</goal>
