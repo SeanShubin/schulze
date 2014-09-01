@@ -1,0 +1,21 @@
+This program combines everybody’s preferences into a single preference that attempts to be closest to what would make most people happy.
+
+First everybody has to rank their preferences in order.  For example, if  people have to choose a place to meet, they would each rank them in order of preference. 
+
+1) Times Square, New York City
+2) Union Station,Washington, D.C.
+3) Grand Bazaar, Istanbul
+4) Tokyo Disneyland, Tokyo
+5) Notre Dame Cathedral, Paris
+
+1) Times Square, New York City
+2) Union Station,Washington, D.C.
+3) Grand Bazaar, Istanbul
+4) Tokyo Disneyland, Tokyo
+5) Notre Dame Cathedral, Paris
+
+1) Times Square, New York City
+2) Union Station,Washington, D.C.
+3) Grand Bazaar, Istanbul
+4) Tokyo Disneyland, Tokyo
+5) Notre Dame Cathedral, Paris
