@@ -1,7 +1,92 @@
-election/name      string one
-election/candidate ref    many
-candidate/name     string one
-voter/name         string one
-preference/voter   ref    one
-preference/winner  ref    one
-preference/loser   ref    one
+Original design
+/------------+-----------+--------+-------\
+| table      | column    | type   | arity |
++------------+-----------+--------+-------+
+| election   | name      | string | one   |
+| election   | candidate | ref    | many  |
+| candidate  | name      | string | one   |
+| voter      | name      | string | one   |
+| preference | voter     | ref    | one   |
+| preference | winner    | ref    | one   |
+| preference | loser     | ref    | one   |
+\------------+-----------+--------+-------/
+
+Final design (arity is always one)
+/------------+-------------+--------\
+| table      | column      | type   |
++------------+-------------+--------+
+| election   | name        | string |
+| candidate  | name        | string |
+| candidate  | election    | ref    |
+| voter      | name        | string |
+| ranking    | election    | ref    |
+| ranking    | voter       | ref    |
+| ranking    | candidate   | ref    |
+| ranking    | rank        | long   |
+| candidate  | description | string |
+\------------+-------------+--------/
+
+Final Schema
+{
+  :db/id #db/id[:db.part/db]
+  :db/ident :election/name
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db.install/_attribute :db.part/db
+}
+{
+  :db/id #db/id[:db.part/db]
+  :db/ident :candidate/name
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db.install/_attribute :db.part/db
+}
+{
+  :db/id #db/id[:db.part/db]
+  :db/ident :candidate/election
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one
+  :db.install/_attribute :db.part/db
+}
+{
+  :db/id #db/id[:db.part/db]
+  :db/ident :voter/name
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db.install/_attribute :db.part/db
+}
+{
+  :db/id #db/id[:db.part/db]
+  :db/ident :ranking/election
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one
+  :db.install/_attribute :db.part/db
+}
+{
+  :db/id #db/id[:db.part/db]
+  :db/ident :ranking/voter
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one
+  :db.install/_attribute :db.part/db
+}
+{
+  :db/id #db/id[:db.part/db]
+  :db/ident :ranking/candidate
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one
+  :db.install/_attribute :db.part/db
+}
+{
+  :db/id #db/id[:db.part/db]
+  :db/ident :ranking/rank
+  :db/valueType :db.type/long
+  :db/cardinality :db.cardinality/one
+  :db.install/_attribute :db.part/db
+}
+{
+  :db/id #db/id[:db.part/db]
+  :db/ident :candidate/description
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db.install/_attribute :db.part/db
+}
