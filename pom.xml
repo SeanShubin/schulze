@@ -69,7 +69,7 @@
             <dependency>
                 <groupId>com.datomic</groupId>
                 <artifactId>datomic-free</artifactId>
-                <version>0.9.4755</version>
+                <version>0.9.4956</version>
             </dependency>
             <dependency>
                 <groupId>org.clojure</groupId>
