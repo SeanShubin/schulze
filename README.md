@@ -4,20 +4,10 @@ Aggregates preferences via the schulze method voting system (a condorcet method)
 
 Setup
 =
-- Fix clojure zip-within-zip bug
 - Install Datomic
 - Launch Datomic
 - Generate schulze server one-jar
 - Launch schulze server one-jar
-
-Fix clojure zip-within-zip bug
-=
-Clojure is needed because we are depending on datomic.  
-Clojure has a bug which prevents the clojure runtime from loading classes that are in nested zip files.  
-This will matter if you are distributing the code via the maven-onejar-plugin.  
-There is some discussion about this issue at [CLJ-971](http://dev.clojure.org/jira/browse/CLJ-971).  
-Until this is fixed, you will have to fix the clojure runtime yourself.  
-Instructions to do this can be found at [clojure-one-jar](https://github.com/SeanShubin/clojure-one-jar).  
 
 Install datomic
 =
@@ -28,7 +18,7 @@ Edit the pom.xml file so that the datomic version matches, for example:
     <dependency>
         <groupId>com.datomic</groupId>
         <artifactId>datomic-free</artifactId>
-        <version>0.9.4755</version>
+        <version>0.9.4956</version>
     </dependency>
 
 Launch Datomic
