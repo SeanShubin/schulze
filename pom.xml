@@ -18,19 +18,17 @@
     </modules>
     <repositories>
         <repository>
-            <id>scala-tools.org</id>
-            <name>Scala-tools Maven2 Repository</name>
-            <url>https://oss.sonatype.org/content/groups/scala-tools/</url>
+            <id>sean-datomic</id>
+            <name>sean-datomic</name>
+            <url>http://thoughtfulcraftsmanship.com/nexus/content/repositories/datomic/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
-            <id>scala-tools.org</id>
-            <name>Scala-tools Maven2 Repository</name>
-            <url>https://oss.sonatype.org/content/groups/scala-tools/</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>onejar-maven-plugin.googlecode.com</id>
+            <id>onejar</id>
             <url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
         </pluginRepository>
     </pluginRepositories>
@@ -69,7 +67,7 @@
             <dependency>
                 <groupId>com.datomic</groupId>
                 <artifactId>datomic-free</artifactId>
-                <version>0.9.4956</version>
+                <version>0.9.5130</version>
             </dependency>
             <dependency>
                 <groupId>org.clojure</groupId>
