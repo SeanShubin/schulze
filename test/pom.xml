@@ -18,13 +18,8 @@
         </dependency>
         <dependency>
             <groupId>com.seanshubin</groupId>
-            <artifactId>black-box-test-5-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.seanshubin</groupId>
             <artifactId>schulze-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
     <build>

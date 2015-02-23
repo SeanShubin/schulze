@@ -38,12 +38,12 @@
         <dependency>
             <groupId>com.seanshubin</groupId>
             <artifactId>schulze-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>com.seanshubin</groupId>
             <artifactId>schulze-persistence</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
     <build>
