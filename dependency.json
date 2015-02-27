@@ -1,0 +1,31 @@
+{
+    "searchPaths": [
+        [ "server", "target", "schulze-server.jar" ]
+    ],
+    "styleSheet": [ "dependency.css" ],
+    "relevantDependencyPattern": {
+        "includeRegex": [ "com/seanshubin/.*" ],
+        "excludeRegex": [ ]
+    },
+    "trimRegex": "^com/seanshubin/",
+    "classFileNamePattern": {
+        "includeRegex": [ ".*\\.class" ],
+        "excludeRegex": [ ]
+    },
+    "zipFileNamePattern": {
+        "includeRegex": [ ".*\\.zip", ".*\\.war", ".*\\.jar" ],
+        "excludeRegex": [ ]
+    },
+    "generatedReportDirectory": [ "server", "target", "dependency-report" ],
+    "classLimits": {
+        "depth": 11,
+        "complexity": 100,
+        "cycleCount": 0
+    },
+    "packageLimits": {
+        "depth": 4,
+        "complexity": 10,
+        "cycleCount": 0
+    },
+    "failIfAnyLimitExceeded": true
+}
