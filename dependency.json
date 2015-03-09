@@ -43,8 +43,8 @@
     "cycleSize": 0
   },
   "groupingLimits": {
-    "depth": 1,
-    "complexity": 0,
+    "depth": 2,
+    "complexity": 1,
     "cycleCount": 0,
     "cycleSize": 0
   },
