@@ -51,5 +51,4 @@ object DatomicUtil {
     val retractEntityTransactions = entities.map(retractEntity)
     transact(connection, retractEntityTransactions).get()
   }
-
 }
