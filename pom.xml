@@ -47,7 +47,7 @@
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>
-                <version>9.3.3.v20150827</version>
+                <version>9.3.4.v20151007</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
@@ -67,7 +67,7 @@
             <dependency>
                 <groupId>com.datomic</groupId>
                 <artifactId>datomic-free</artifactId>
-                <version>0.9.5173</version>
+                <version>0.9.5302</version>
             </dependency>
             <dependency>
                 <groupId>org.clojure</groupId>
