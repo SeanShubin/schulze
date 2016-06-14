@@ -1,0 +1,18 @@
+
+{
+  reportDir generated/detangled
+  searchPaths
+  [
+    server/target/schulze-server.jar
+  ]
+  level 2
+  startsWith
+  {
+    include [[com seanshubin]]
+    exclude []
+    drop [[com seanshubin]]
+  }
+  ignoreFiles []
+  canFailBuild true
+  allowedInCycle []
+}

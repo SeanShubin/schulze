@@ -1,37 +1,16 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
+    <!-- The Basics -->
     <groupId>com.seanshubin</groupId>
     <artifactId>schulze</artifactId>
-    <name>schulze parent</name>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-    <modules>
-        <module>core</module>
-        <!--<module>test</module>-->
-        <module>persistence</module>
-        <module>server</module>
-        <!--<module>web</module>-->
-        <!--<module>web-test</module>-->
-    </modules>
-    <repositories>
-        <repository>
-            <id>sean-datomic</id>
-            <name>sean-datomic</name>
-            <url>http://thoughtfulcraftsmanship.com/nexus/content/repositories/datomic/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>onejar</id>
-            <url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
-        </pluginRepository>
-    </pluginRepositories>
+    <!--<dependencies>...</dependencies>-->
+    <!--<parent>...</parent>-->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -76,6 +55,19 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    <modules>
+        <module>core</module>
+        <!--<module>test</module>-->
+        <module>persistence</module>
+        <module>server</module>
+        <!--<module>web</module>-->
+        <!--<module>web-test</module>-->
+    </modules>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <!-- Build Settings -->
     <build>
         <sourceDirectory>src/main/scala</sourceDirectory>
         <plugins>
@@ -125,4 +117,40 @@
             </plugin>
         </plugins>
     </build>
+    <!--<reporting>...</reporting>-->
+
+    <!-- More Project Information -->
+    <name>schulze parent</name>
+    <!--<description>...</description>-->
+    <!--<url>...</url>-->
+    <!--<inceptionYear>...</inceptionYear>-->
+    <!--<licenses>...</licenses>-->
+    <!--<organization>...</organization>-->
+    <!--<developers>...</developers>-->
+    <!--<contributors>...</contributors>-->
+
+    <!-- Environment Settings -->
+    <!--<issueManagement>...</issueManagement>-->
+    <!--<ciManagement>...</ciManagement>-->
+    <!--<mailingLists>...</mailingLists>-->
+    <!--<scm>...</scm>-->
+    <!--<prerequisites>...</prerequisites>-->
+    <repositories>
+        <repository>
+            <id>sean-datomic</id>
+            <name>sean-datomic</name>
+            <url>http://thoughtfulcraftsmanship.com/nexus/content/repositories/datomic/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>onejar</id>
+            <url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
+        </pluginRepository>
+    </pluginRepositories>
+    <!--<distributionManagement>...</distributionManagement>-->
+    <!--<profiles>...</profiles>-->
 </project>
