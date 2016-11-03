@@ -4,7 +4,7 @@ import datomic.{Util, Entity, Connection, Peer}
 import datomic.Util._
 import java.util.Collection
 import java.util.{List => JavaList}
-import scala.collection.JavaConversions
+import scala.collection.JavaConverters._
 import datomic.function.Function
 
 object Prototype extends App {
@@ -29,7 +29,7 @@ object Prototype extends App {
       connection.transact(list(read(text))).get()
     }
 
-    def listToSeq(list: JavaList[AnyRef]): Seq[AnyRef] = JavaConversions.collectionAsScalaIterable(list).toSeq
+    def listToSeq(list: JavaList[AnyRef]): Seq[AnyRef] = list.asScala
 
     def query(textWithMargin: String): Seq[Seq[AnyRef]] = {
       val text = textWithMargin.stripMargin
@@ -37,14 +37,14 @@ object Prototype extends App {
       println(text)
       val results: Collection[JavaList[AnyRef]] = Peer.q(read(text), connection.db)
       println(s"${results.size()} results")
-      val resultsIterable: Iterable[JavaList[AnyRef]] = JavaConversions.collectionAsScalaIterable(results)
+      val resultsIterable: Iterable[JavaList[AnyRef]] = results.asScala
       resultsIterable.foreach(println)
       val resultsSeq: Seq[JavaList[AnyRef]] = resultsIterable.toSeq
       resultsSeq.map(listToSeq)
     }
 
     def entityToMap(entity:Entity):Map[String, AnyRef] = {
-      val keys = JavaConversions.asScalaSet(entity.keySet())
+      val keys = entity.keySet().asScala
       val entries = for {
         key <- keys
       } yield {

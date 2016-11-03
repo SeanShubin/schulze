@@ -1,7 +1,7 @@
 package com.seanshubin.schulze.persistence
 
 import java.util.{Collection => JavaCollection, List => JavaList, Map => JavaMap}
-import scala.collection.JavaConversions
+import scala.collection.JavaConverters._
 import datomic.{Connection, Util, Peer}
 import com.seanshubin.schulze.persistence.datomic_util.ScalaAdaptor._
 
@@ -24,7 +24,7 @@ object DatomicUtil {
 
   def extractLongFromRows(rows: DatomicRows): Long = {
     if (rows.size() != 1) throw new RuntimeException("Expected only a single row")
-    val row = JavaConversions.collectionAsScalaIterable(rows).iterator.next()
+    val row = rows.asScala.iterator.next()
     if (row.size() != 1) throw new RuntimeException("Expected only a single value in the row")
     row.get(0) match {
       case x: java.lang.Long => x
@@ -33,16 +33,16 @@ object DatomicUtil {
   }
 
   def rowsToStringSet(rows: DatomicRows): Set[String] = {
-    JavaConversions.collectionAsScalaIterable(rows).map(extractString).toSet
+    rows.asScala.map(extractString).toSet
   }
 
   def rowsToLongSet(rows: DatomicRows): Set[Long] = {
-    JavaConversions.collectionAsScalaIterable(rows).map(extractLong).toSet
+    rows.asScala.map(extractLong).toSet
   }
 
-  def rowsToIterable(rows: DatomicRows): Iterable[DatomicRow] = JavaConversions.collectionAsScalaIterable(rows)
+  def rowsToIterable(rows: DatomicRows): Iterable[DatomicRow] = rows.asScala
 
-  def transactionsToIterable(transactions: DatomicTransactions): Iterable[DatomicTransaction] = JavaConversions.collectionAsScalaIterable(transactions)
+  def transactionsToIterable(transactions: DatomicTransactions): Iterable[DatomicTransaction] = transactions.asScala
 
   def tempId() = Peer.tempid(":db.part/user")
 

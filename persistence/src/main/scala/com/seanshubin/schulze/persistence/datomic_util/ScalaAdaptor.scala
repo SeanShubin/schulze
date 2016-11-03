@@ -1,11 +1,12 @@
 package com.seanshubin.schulze.persistence.datomic_util
 
+import java.util
 import java.util.{Map => JavaMap}
 import java.util.{List => JavaList}
-import java.util.HashMap
-import java.util.ArrayList
-import datomic.{Entity, Peer, Connection}
-import scala.collection.JavaConversions
+
+import datomic.{Connection, Entity, Peer}
+
+import scala.collection.JavaConverters._
 
 object ScalaAdaptor {
   def transact(connection: Connection, transactions: Seq[Any]) = {
@@ -17,7 +18,7 @@ object ScalaAdaptor {
 
   def queryRows[T](convertRow: JavaList[AnyRef] => T, query: Any, parameters: Any*): Seq[T] = {
     val javaRows = Peer.q(datomify(query), parameters.map(datomify): _*)
-    val scalaRows = JavaConversions.collectionAsScalaIterable(javaRows).map(convertRow).toSeq
+    val scalaRows = javaRows.asScala.map(convertRow).toSeq
     scalaRows
   }
 
@@ -27,7 +28,7 @@ object ScalaAdaptor {
   }
 
   def entityToMap(entity:Entity):Map[String, AnyRef] = {
-    val keys = JavaConversions.asScalaSet(entity.keySet())
+    val keys = entity.keySet().asScala
     val entries = for {
       key <- keys
     } yield {
@@ -109,7 +110,7 @@ object ScalaAdaptor {
   }
 
   private def toJavaMap(map: Map[AnyRef, AnyRef]): JavaMap[AnyRef, AnyRef] = {
-    val javaMap = new HashMap[AnyRef, AnyRef]
+    val javaMap = new util.HashMap[AnyRef, AnyRef]
     def addEntry(entry: (AnyRef, AnyRef)) {
       val (key, value) = entry
       javaMap.put(key, value)
@@ -119,7 +120,7 @@ object ScalaAdaptor {
   }
 
   private def toJavaList(seq: Seq[AnyRef]): JavaList[AnyRef] = {
-    val javaList = new ArrayList[AnyRef]
+    val javaList = new util.ArrayList[AnyRef]
     def addEntry(entry: AnyRef) {
       javaList.add(entry)
     }

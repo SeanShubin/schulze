@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import java.io.StringWriter
 import com.fasterxml.jackson.annotation.JsonInclude
-import scala.collection.JavaConversions
+import scala.collection.JavaConverters._
 
 class JsonSerializationImpl extends JsonSerialization {
   private val mapper = new ObjectMapper()
@@ -27,7 +27,7 @@ class JsonSerializationImpl extends JsonSerialization {
   def fromJsonArray[T](json: String, theElementClass: Class[T]): Seq[T] = {
     val collectionType = mapper.getTypeFactory.constructCollectionType(classOf[java.util.List[T]], theElementClass)
     val myObjects: java.util.List[T] = mapper.readValue(json, collectionType)
-    JavaConversions.collectionAsScalaIterable(myObjects).toSeq
+    myObjects.asScala
   }
 }
 

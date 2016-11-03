@@ -1,7 +1,7 @@
 package com.seanshubin.server
 
 import javax.servlet.http.{HttpServletResponse, HttpServletRequest}
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import java.io.{OutputStream, ByteArrayOutputStream, InputStream}
 import java.nio.charset.Charset
 import scala.annotation.tailrec
@@ -10,10 +10,10 @@ class SimplifiedTransformerImpl(charset: Charset) extends SimplifiedTransformer 
   def fromHttpServletRequest(request: HttpServletRequest): SimplifiedRequest = {
     val path: String = request.getRequestURI
     val method: String = request.getMethod
-    val headerNames: Seq[String] = enumerationAsScalaIterator(request.getHeaderNames).toIndexedSeq
+    val headerNames: Seq[String] = request.getHeaderNames.asScala.toIndexedSeq
     def headerFromName(headerName: String): (String, String) = (headerName, request.getHeader(headerName))
     val headers: Seq[(String, String)] = headerNames.map(headerFromName)
-    val parameterNames: Seq[String] = enumerationAsScalaIterator(request.getParameterNames).toIndexedSeq
+    val parameterNames: Seq[String] = request.getParameterNames.asScala.toIndexedSeq
     def parameterFromName(parameterName: String): (String, Seq[String]) = (parameterName, request.getParameterValues(parameterName))
     val parameters: Seq[(String, Seq[String])] = parameterNames.map(parameterFromName)
     val body: String = loadInputStreamIntoString(request.getInputStream, charset)

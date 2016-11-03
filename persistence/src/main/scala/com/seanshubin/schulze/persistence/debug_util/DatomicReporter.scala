@@ -1,14 +1,16 @@
 package com.seanshubin.schulze.persistence.debug_util
 
-import java.util.{List => JavaList, Collection => JavaCollection, Map => JavaMap, HashMap, ArrayList}
-import scala.collection.JavaConversions
+import java.util
+import java.util.{ArrayList, HashMap, Collection => JavaCollection, List => JavaList, Map => JavaMap}
+
+import scala.collection.JavaConverters._
 import scala.annotation.tailrec
-import datomic.{Util, Datom, Peer, Database}
+import datomic.{Database, Datom, Peer, Util}
 
 object DatomicReporter {
   def firstObjectOfRow(row: JavaList[AnyRef]): AnyRef = row.get(0)
 
-  def rowsToSequence(rows: JavaCollection[JavaList[AnyRef]]): Seq[JavaList[AnyRef]] = JavaConversions.asScalaBuffer(new ArrayList(rows))
+  def rowsToSequence(rows: JavaCollection[JavaList[AnyRef]]): Seq[JavaList[AnyRef]] = new util.ArrayList(rows).asScala
 
   def queryAllAttributes(db: Database): Set[String] = {
     val query = datomify(Map(
@@ -42,7 +44,7 @@ object DatomicReporter {
 
   def databaseAndEntityIdToLines(db: Database, id: Long): Seq[String] = {
     val entity = db.entity(id)
-    val keys = JavaConversions.asScalaSet(entity.keySet()).toSeq.sorted
+    val keys = entity.keySet().asScala.toSeq.sorted
     def keyToLine(key: String) = {
       val value = entity.get(key)
       val line = s"    $key -> $value"
@@ -98,7 +100,7 @@ object DatomicReporter {
       ":find" -> Seq("?entity", "?value"),
       ":where" -> Seq(Seq("?entity", attribute, "?value"))))
     val rows = Peer.q(query, db)
-    val rowLines = JavaConversions.asScalaBuffer(new ArrayList(rows)).map(javaListToTupleTwo).sortWith(sortTupleTwo).map(formatAttributeRow)
+    val rowLines = new util.ArrayList(rows).asScala.map(javaListToTupleTwo).sortWith(sortTupleTwo).map(formatAttributeRow)
     val lines = attribute +: rowLines
     lines
   }
@@ -108,7 +110,7 @@ object DatomicReporter {
     def attributeToLines(attribute: String) = databaseAndAttributeToLines(db, attribute)
     val byColumnLines = allAttributes.flatMap(attributeToLines)
 
-    val datoms = JavaConversions.iterableAsScalaIterable(db.datoms(Database.EAVT))
+    val datoms = db.datoms(Database.EAVT).asScala
     def entityIdToLines(entityId: Long): Seq[String] = databaseAndEntityIdToLines(db, entityId)
     val byRowLines = datoms.map(datomToEntityId).toSet.toSeq.sorted.flatMap(entityIdToLines)
 
@@ -123,8 +125,8 @@ object DatomicReporter {
     def attributeToLines(attribute: String) = databaseAndAttributeToLines(db, attribute)
     val byColumnLines = relevantAttributes.flatMap(attributeToLines)
 
-    val ignoreEntityIds = JavaConversions.iterableAsScalaIterable(baseline.datoms(Database.EAVT)).map(datomToEntityId).toSet
-    val allEntityIds = JavaConversions.iterableAsScalaIterable(db.datoms(Database.EAVT)).map(datomToEntityId).toSet
+    val ignoreEntityIds = baseline.datoms(Database.EAVT).asScala.map(datomToEntityId).toSet
+    val allEntityIds = db.datoms(Database.EAVT).asScala.map(datomToEntityId).toSet
     val relevantEntityIds = (allEntityIds -- ignoreEntityIds).toSeq.sorted
     def entityIdToLines(entityId: Long): Seq[String] = databaseAndEntityIdToLines(db, entityId)
     val byRowLines = relevantEntityIds.flatMap(entityIdToLines)
