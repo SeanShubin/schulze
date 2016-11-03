@@ -15,10 +15,6 @@
             <artifactId>scala-library</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-actor_2.11</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.seanshubin</groupId>
             <artifactId>schulze-web</artifactId>
             <version>${project.parent.version}</version>
