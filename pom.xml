@@ -32,7 +32,7 @@
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
-                <artifactId>jackson-module-scala_2.12.0-RC1</artifactId>
+                <artifactId>jackson-module-scala_2.12</artifactId>
                 <version>2.8.3</version>
             </dependency>
             <dependency>
