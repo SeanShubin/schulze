@@ -48,7 +48,7 @@
         </dependencies>
     </dependencyManagement>
     <modules>
-        <module>core</module>
+        <module>domain</module>
         <!--<module>test</module>-->
         <module>persistence</module>
         <module>server</module>

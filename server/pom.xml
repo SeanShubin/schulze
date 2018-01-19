@@ -32,7 +32,7 @@
         </dependency>
         <dependency>
             <groupId>com.seanshubin</groupId>
-            <artifactId>schulze-core</artifactId>
+            <artifactId>-schulze-domain</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>

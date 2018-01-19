@@ -1,0 +1,64 @@
+{
+  prefix [com seanshubin]
+  name [schulze]
+  description 'Aggregates preferences via the schulze method voting system (a condorcet method)'
+  version 0.1-SNAPSHOT
+  developer {
+    name 'Sean Shubin'
+    githubName SeanShubin
+    mavenUserName SeanShubin
+    organization 'Sean Shubin'
+    url http://seanshubin.com/
+  }
+  dependencies {
+    scala-library {
+      group org.scala-lang
+      artifact scala-library
+    }
+    scala-test {
+      group org.scalatest
+      artifact scalatest_2.12
+      scope test
+    }
+            jetty-server {
+                group org.eclipse.jetty
+                artifact jetty-server
+                
+            }
+            httpcore {
+                group org.apache.httpcomponents
+                artifact httpcore
+                
+            }
+            httpclient {
+                group org.apache.httpcomponents
+                artifact httpclient
+                
+            }
+            jackson-module {
+                group com.fasterxml.jackson.module
+                artifact jackson-module-scala_2.12
+                
+            }
+            datomic {
+                group com.datomic
+                artifact datomic-free
+                
+            }
+            clojure {
+                group org.clojure
+                artifact clojure
+                
+            }
+  }
+  global [scala-library scala-test]
+  modules {
+    console [domain]
+    domain  [devon xml google-http-client]
+    xml     []
+  }
+  detangler [console]
+  consoleEntryPoint {
+    console com.seanshubin.project.generator.console.EntryPoint
+  }
+}
