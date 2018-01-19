@@ -6,7 +6,7 @@
 
     <!-- The Basics -->
     <!--<groupId>...</groupId>-->
-    <artifactId>-schulze-domain</artifactId>
+    <artifactId>schulze-domain</artifactId>
     <!--<version>...</version>-->
     <!--<packaging>...</packaging>-->
     <dependencies>
