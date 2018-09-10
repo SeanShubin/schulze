@@ -1,0 +1,13 @@
+(local machine)
+cd ~/github/sean/schulze
+mvn clean verify
+scp server/target/schulze.jar devops102.wl.cj.com:/tmp
+
+(remote)
+cd /home/cjdev/sshubin/apps/mine/schulze
+cp /tmp/schulze.jar .
+
+java -Djava.io.tmpdir=/home/cjdev/tmp -cp "schulze-server.jar:*" com.seanshubin.schulze.server.ServerApplication 12345 datomic:free://devops102.wl.cj.com:4334/schulze
+
+
+javap -verbose server/target/classes/com/seanshubin/schulze/server/ServerApplication | grep version

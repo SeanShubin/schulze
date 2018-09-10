@@ -98,8 +98,8 @@ class DatomicPersistenceSnapshotApi(db: Database) extends PersistenceSnapshotApi
     val candidateIds:Seq[Long] = queryRows(singleLong, candidateIdsQuery, db, electionId)
     def candidateIdToRanking(candidateId:Long):Ranking = {
       val candidate:Entity = db.entity(candidateId)
-      val name:String = candidate.get("candidate/name").asInstanceOf[String]
-      val maybeDescription:Option[String] = Option(candidate.get("candidate/description").asInstanceOf[String])
+      val name:String = candidate.get(":candidate/name").asInstanceOf[String]
+      val maybeDescription:Option[String] = Option(candidate.get(":candidate/description").asInstanceOf[String])
       val maybeRank:Option[Long] = rankByCandidateId.get(candidateId)
       Ranking(name, maybeDescription, maybeRank)
     }

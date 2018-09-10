@@ -2,6 +2,13 @@ package com.seanshubin.server
 
 
 class LineEmittingNotifications(emit: String => Unit) extends Notifications {
+
+  override def configuration(configuration: Configuration): Unit = {
+    emit(s"port       = ${configuration.port}")
+    emit(s"datomicUri = '${configuration.datomicUri}'")
+    emit(s"Waiting on datomic...")
+  }
+
   def datomicReady() {
     emit("Datomic Ready")
   }

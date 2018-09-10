@@ -55,6 +55,7 @@
     {
       group com.datomic
       artifact datomic-free
+      lockedAtVersion 0.9.5703
     }
     clojure
     {

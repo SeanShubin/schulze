@@ -1,0 +1,31 @@
+{
+  reportDir server/target/detangled
+  searchPaths
+  [
+    ./server/target/schulze.jar
+  ]
+  level 2
+  startsWith
+  {
+    include
+    [
+      [
+        com
+        seanshubin
+        schulze
+      ]
+    ]
+    exclude []
+    drop
+    [
+      [
+        com
+        seanshubin
+        schulze
+      ]
+    ]
+  }
+  ignoreFiles []
+  canFailBuild true
+  allowedInCycle server/detangler-allowed-in-cycle.txt
+}

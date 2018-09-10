@@ -1,13 +1,22 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <!-- The Basics -->
-    <groupId>com.seanshubin</groupId>
-    <artifactId>schulze</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <groupId>com.seanshubin.schulze</groupId>
+    <artifactId>schulze-parent</artifactId>
+    <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <!--<dependencies>...</dependencies>-->
-    <!--<parent>...</parent>-->
+    <dependencies>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_2.12</artifactId>
+        </dependency>
+    </dependencies>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -16,29 +25,35 @@
                 <version>2.12.6</version>
             </dependency>
             <dependency>
+                <groupId>org.scalatest</groupId>
+                <artifactId>scalatest_2.12</artifactId>
+                <version>3.0.5</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>
-                <version>9.4.10.v20180503</version>
+                <version>9.4.12.v20180830</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore</artifactId>
-                <version>4.4.9</version>
+                <version>4.4.10</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.5.5</version>
+                <version>4.5.6</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-scala_2.12</artifactId>
-                <version>2.9.5</version>
+                <version>2.9.6</version>
             </dependency>
             <dependency>
                 <groupId>com.datomic</groupId>
                 <artifactId>datomic-free</artifactId>
-                <version>0.9.5302</version>
+                <version>0.9.5703</version>
             </dependency>
             <dependency>
                 <groupId>org.clojure</groupId>
@@ -49,24 +64,18 @@
     </dependencyManagement>
     <modules>
         <module>domain</module>
-        <!--<module>test</module>-->
         <module>persistence</module>
         <module>server</module>
-        <!--<module>web</module>-->
-        <!--<module>web-test</module>-->
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <!-- Build Settings -->
     <build>
-        <sourceDirectory>src/main/scala</sourceDirectory>
         <plugins>
             <plugin>
-                <groupId>org.scala-tools</groupId>
-                <artifactId>maven-scala-plugin</artifactId>
-                <version>2.15.2</version>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>3.4.2</version>
                 <executions>
                     <execution>
                         <goals>
@@ -81,12 +90,16 @@
                         <jvmArg>-Xms64m</jvmArg>
                         <jvmArg>-Xmx1024m</jvmArg>
                     </jvmArgs>
+                    <args>
+                        <arg>-unchecked</arg>
+                        <arg>-deprecation</arg>
+                        <arg>-feature</arg>
+                    </args>
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.1.2</version>
+                <version>3.0.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -98,51 +111,99 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- disable surefire -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.0</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <skipTests>true</skipTests>
                 </configuration>
             </plugin>
         </plugins>
+        <pluginManagement>
+            <plugins>
+                <!-- enable scalatest -->
+                <plugin>
+                    <groupId>org.scalatest</groupId>
+                    <artifactId>scalatest-maven-plugin</artifactId>
+                    <version>2.0.0</version>
+                    <configuration>
+                        <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                        <junitxml>.</junitxml>
+                        <filereports>WDF TestSuite.txt</filereports>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>test</id>
+                            <goals>
+                                <goal>test</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
-    <!--<reporting>...</reporting>-->
-
-    <!-- More Project Information -->
-    <name>schulze parent</name>
-    <!--<description>...</description>-->
-    <!--<url>...</url>-->
-    <!--<inceptionYear>...</inceptionYear>-->
-    <!--<licenses>...</licenses>-->
-    <!--<organization>...</organization>-->
-    <!--<developers>...</developers>-->
-    <!--<contributors>...</contributors>-->
-
-    <!-- Environment Settings -->
-    <!--<issueManagement>...</issueManagement>-->
-    <!--<ciManagement>...</ciManagement>-->
-    <!--<mailingLists>...</mailingLists>-->
-    <!--<scm>...</scm>-->
-    <!--<prerequisites>...</prerequisites>-->
-    <repositories>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>Aggregates preferences via the schulze method voting system (a condorcet method)</description>
+    <url>https://github.com/SeanShubin/schulze</url>
+    <licenses>
+        <license>
+            <name>Unlicense</name>
+            <url>http://unlicense.org/</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Sean Shubin</name>
+            <organization>Sean Shubin</organization>
+            <organizationUrl>http://seanshubin.com/</organizationUrl>
+        </developer>
+    </developers>
+    <scm>
+        <connection>git@github.com:SeanShubin/schulze.git</connection>
+        <developerConnection>git@github.com:SeanShubin/schulze.git</developerConnection>
+        <url>https://github.com/SeanShubin/schulze</url>
+    </scm>
+    <distributionManagement>
         <repository>
-            <id>sean-datomic</id>
-            <name>sean-datomic</name>
-            <url>http://thoughtfulcraftsmanship.com/nexus/content/repositories/datomic/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+            <id>maven-staging</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
         </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>onejar</id>
-            <url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
-        </pluginRepository>
-    </pluginRepositories>
-    <!--<distributionManagement>...</distributionManagement>-->
-    <!--<profiles>...</profiles>-->
+    </distributionManagement>
+    <profiles>
+        <profile>
+            <id>stage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.0.1</version>
+                        <executions>
+                            <execution>
+                                <id>generate-dummy-javadoc-per-maven-central-requirements</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

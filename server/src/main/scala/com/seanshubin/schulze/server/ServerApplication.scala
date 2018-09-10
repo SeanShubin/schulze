@@ -10,6 +10,7 @@ object ServerApplication extends App {
       val datomicUri = configuration.datomicUri
       val random = new Random()
     }
+    wiring.notifications.configuration(configuration)
     wiring.server.start()
     wiring.persistenceApi.snapshot.electionNames() //warm up the database
     wiring.notifications.datomicReady()
